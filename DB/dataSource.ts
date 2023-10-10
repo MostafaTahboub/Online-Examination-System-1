@@ -1,5 +1,8 @@
 import { DataSource } from "typeorm";
-import dotenv from 'dotenv';
+import { User } from "./Entities/User.js";
+import { Profile } from "./Entities/Profile.js";
+import { Permission } from "./Entities/Permissions.js";
+import { Role } from "./Entities/Role.js";
 
 const dataSource = new DataSource({
     type:"mysql",
@@ -7,7 +10,8 @@ const dataSource = new DataSource({
     port:Number(process.env.DB_PORT),
     username:process.env.DB_USER,
     password:process.env.DB_PASSWORD,
-    database:"OnlineExaminationSystem",
+    database:"online",
+    entities:[User, Profile, Permission, Role],
     synchronize:true,  
     logging:true
    })
