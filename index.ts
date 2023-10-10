@@ -1,3 +1,4 @@
+import './config.js'
 import express from 'express';
 import dataSource from './DB/dataSource.js';
 
@@ -14,7 +15,8 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`App is lestining to PORT  : ` + PORT);
-    // dataSource.initialize();
+    console.log(process.env.DB_USER);
+    dataSource.initialize();
 });
 
 
