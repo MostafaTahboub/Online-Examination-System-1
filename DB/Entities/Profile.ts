@@ -9,7 +9,7 @@ import {
   } from "typeorm";
   import { User } from "./User.js";
   
-  @Entity()
+  @Entity("profile")
   export class Profile extends BaseEntity {
     @PrimaryGeneratedColumn("increment")
     id: number;
@@ -23,7 +23,8 @@ import {
   
     @Column({ type: "date" })
     dateOfBirth: Date;
-  
+
+
     
   }
   
