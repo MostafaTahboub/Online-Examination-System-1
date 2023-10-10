@@ -13,6 +13,7 @@ import {
   import bcrypt from "bcrypt";
   import {Profile}  from "./Profile.js";
   import { Role } from "./Role.js";
+import { Exam } from "./Exam.js";
   @Entity('user')
   export class User extends BaseEntity {
     @PrimaryGeneratedColumn("increment")
@@ -39,11 +40,15 @@ import {
       })
       createdAt: Date;
   
-    @ManyToMany(() => Role, (role) => role.users, { cascade: ['soft-remove'], eager: true })
+    @ManyToMany(() => Role, (role) => role.users, {eager: true })
       roles: Role[];
-  
-    @OneToOne(() => Profile, { eager: true })
-      @JoinColumn()
-      profile: Profile;
+    
+    // @OneToOne(() => User)
+    //   @JoinColumn()
+    //     user: User;
+
+    @ManyToMany(()=> Exam, (exam)=> exam.users)
+    @JoinTable()
+    exams: Exam[];
   }
   
