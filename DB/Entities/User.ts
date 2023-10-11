@@ -11,6 +11,7 @@ import {
     JoinTable,
     ManyToOne,
     OneToMany,
+    Relation,
   } from "typeorm";
   import bcrypt from "bcrypt";
   import { Role } from "./Role.js";
@@ -38,16 +39,16 @@ import { Enrollment } from "./Enrollment.js";
   
       @ManyToMany(()=> Exam, (exam)=> exam.users)
       @JoinTable()
-      exams: Exam[];
+      exams: Relation<Exam[]>;
 
       @ManyToOne(() => Role, (role) => role.users, {eager: true })
-        role: Role;
+        role: Relation<Role>;
       
       @OneToMany(()=>Enrollment, (enrollment)=> enrollment.user_id)
-      enrollments: Enrollment[];
+      enrollments: Relation<Enrollment[]>;
       
       // @OneToMany(()=>ExamAnswer, (examAnswer)=> examAnswer.users)
-      // Answers: ExamAnwer[];
+      // Answers: Relation<ExamAnwer[]>;
 
   }
   

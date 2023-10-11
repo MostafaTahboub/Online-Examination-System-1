@@ -6,9 +6,10 @@ import {
   ManyToOne,
   ManyToMany,
   JoinTable,
+  Relation,
+  OneToMany
 } from "typeorm";
 import { Exam } from "./Exam.js";
-import { OneToMany } from "typeorm/browser";
 
 @Entity("question")
 export class Quesion extends BaseEntity {
@@ -32,14 +33,14 @@ export class Quesion extends BaseEntity {
 
   @ManyToMany(() => Exam, (exam) => exam.questions)
   @JoinTable()
-  exams: Exam[];
+  exams: Relation<Exam[]>;
 
   // @ManyToOne(()=> Subject, (subject)=>subject.questions)
-  // subject_id: Subject
+  // subject_id: Relation<Subject>
 
   // @ManyToOne(()=> QuestionType, (questionType)=>questionType.questions)
-  // question_type_id: QusetionType;
+  // question_type_id: Relation<QusetionType>;
 
   // @OneToMany(()=>Exam_Answers, (examAnswer)=> examAnswer.answers)
-  // answers: Exam_Answers[];
+  // answers: Relation<Exam_Answers[]>;
 }
