@@ -1,5 +1,4 @@
-import { ManyToOne, Relation,BaseEntity,Entity } from "typeorm";
-import { CreateDateColumn, PrimaryGeneratedColumn } from "typeorm";
+import { ManyToOne, Relation,BaseEntity,Entity, CreateDateColumn, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./User.js";
 import { Exam } from "./Exam.js";
 
@@ -11,10 +10,10 @@ export class Enrollment extends BaseEntity{
     id: number;
 
     @ManyToOne(()=> User, (user)=> user.enrollments)
-    user_id: Relation<User>;
+    user: Relation<User>;
 
     @ManyToOne(()=> Exam, (exam)=> exam.enrollments)
-    exam_id: Relation<Exam>;
+    exam: Relation<Exam>;
 
     @CreateDateColumn({
         type: "timestamp",

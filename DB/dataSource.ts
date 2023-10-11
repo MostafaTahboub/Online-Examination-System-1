@@ -19,15 +19,9 @@ const dataSource = new DataSource({
   database: process.env.DB_NAME,
   entities: [User, Role, Permission, Question, Exam, Subject, Enrollment, Exam_answers, QuestionType, Response],
   synchronize: true,
-  logging: true,
+  logging: false,
 });
 
-dataSource.initialize()
-  .then(() => {
-    console.log("connected to database :)");
-  })
-  .catch((err) => {
-    console.log("failed to connect to db !! " + err);
-  });
+
 
 export default dataSource;

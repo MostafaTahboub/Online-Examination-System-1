@@ -44,10 +44,10 @@ export class Question extends BaseEntity {
   exams: Relation<Exam[]>;
 
   @ManyToOne(() => Subject, (subject) => subject.question)
-  subject_id: Relation<Subject>
+  subject: Relation<Subject>
 
   @ManyToOne(() => QuestionType, (questionType) => questionType.question)
-  question_type_id: Relation<QuestionType[]>;
+  question_type: Relation<QuestionType[]>;
 
   @OneToMany(() => Exam_answers, (examAnswer) => examAnswer.question)
   answers: Relation<Exam_answers[]>;

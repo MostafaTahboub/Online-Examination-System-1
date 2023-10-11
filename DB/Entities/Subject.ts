@@ -10,7 +10,7 @@ id:number
 @Column({nullable:false})
 name:string
 
-@OneToMany(()=>Question,(question)=>question.subject_id)
+@OneToMany(()=>Question,(question)=>question.subject)
 question:Relation<Question[]>
 
 

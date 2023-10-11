@@ -23,7 +23,7 @@ export class User extends BaseEntity {
   id: number;
 
   @Column({ nullable: false, length: 255 })
-  username: string;
+  name: string;
 
   @BeforeInsert()
   async hashPassword() {
@@ -44,7 +44,7 @@ export class User extends BaseEntity {
   @ManyToOne(() => Role, (role) => role.users, { eager: true })
   role: Relation<Role>;
 
-  @OneToMany(() => Enrollment, (enrollment) => enrollment.user_id)
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.user)
   enrollments: Relation<Enrollment[]>;
 
   @OneToMany(() => Exam_answers, (examAnswer) => examAnswer.user)

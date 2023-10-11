@@ -11,13 +11,13 @@ id:number
 
 // relation with response 
 
-@ManyToOne(()=>Exam,(exam)=>exam.users)
+@ManyToOne(()=>Exam,(exam)=>exam.answers)
 exam:Relation<Exam>
 
 @ManyToOne(()=>User,(user)=>user.Answers)
 user:Relation<User>
 
-@ManyToOne(()=>Question,(question)=>question.answer)
+@ManyToOne(()=>Question,(question)=>question.answers)
 question:Relation<Question>
 
 
