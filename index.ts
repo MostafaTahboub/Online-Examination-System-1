@@ -1,8 +1,6 @@
 import express from 'express';
 import './config.js'
 import dataSource from './DB/dataSource.js';
-import { User } from './DB/Entities/User.js';
-import { Profile } from './DB/Entities/Profile.js';
 
 const app = express();
 

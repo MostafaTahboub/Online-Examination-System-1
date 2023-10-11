@@ -6,10 +6,13 @@ import {
     CreateDateColumn,
     ManyToMany,
     JoinTable,
+    JoinColumn,
+    OneToMany,
+    Relation,
   } from "typeorm";
-  import { Permission } from "./Permissions.js";
+  import {Permission } from "./Permissions.js";
   import { User } from "./User.js";
-  @Entity("role")
+  @Entity()
   export class Role extends BaseEntity {
     @PrimaryGeneratedColumn("increment")
     id: number;
@@ -17,13 +20,12 @@ import {
     @Column()
     roleName: string;
   
-    @ManyToMany(() => User, (user) => user.roles)
-    @JoinTable()
-    users: User[];
+    @OneToMany(() => User, (user) => user.role)
+    users: Relation<User[]>;
   
     @ManyToMany(() => Permission, (permission) => permission.roles, { eager: true })
     @JoinTable()
-    permissions: Permission[];
+    permissions: Relation<Permission[]>;
   
     @CreateDateColumn({
       type: "timestamp",

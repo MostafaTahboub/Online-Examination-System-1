@@ -1,8 +1,14 @@
 import { DataSource } from "typeorm";
 import { User } from "./Entities/User.js";
-import { Profile } from "./Entities/Profile.js";
 import { Permission } from "./Entities/Permissions.js";
 import { Role } from "./Entities/Role.js";
+import { Question } from "./Entities/Question.js";
+import { Exam } from "./Entities/Exam.js";
+import { Subject } from "./Entities/Subject.js";
+import { Enrollment } from "./Entities/Enrollment.js";
+import { Exam_answers } from "./Entities/Exam_answers.js";
+import { QuestionType } from "./Entities/question_Types.js";
+import { Response } from "./Entities/Response.js";
 
 const dataSource = new DataSource({
   type: "mysql",
@@ -10,20 +16,15 @@ const dataSource = new DataSource({
   port: Number(process.env.DB_PORT),
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: "online",
-  entities: [Profile, User, Role, Permission],
+  database: process.env.DB_NAME,
+  entities: [User, Role, Permission, Question, Exam, Subject, Enrollment, Exam_answers, QuestionType, Response],
   synchronize: true,
   logging: true,
 });
 
-dataSource
-  .initialize()
+dataSource.initialize()
   .then(() => {
     console.log("connected to database :)");
-    const user = new User();
-    const profile = new Profile();
-    profile.save();
-    user.save();
   })
   .catch((err) => {
     console.log("failed to connect to db !! " + err);
