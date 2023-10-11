@@ -8,10 +8,11 @@ import {
     JoinTable,
     JoinColumn,
     OneToMany,
+    Relation,
   } from "typeorm";
-  import { Permission } from "./Permissions.js";
+  import {Permission } from "./Permissions.js";
   import { User } from "./User.js";
-  @Entity("role")
+  @Entity()
   export class Role extends BaseEntity {
     @PrimaryGeneratedColumn("increment")
     id: number;
@@ -20,11 +21,11 @@ import {
     roleName: string;
   
     @OneToMany(() => User, (user) => user.role)
-    users: User[];
+    users: Relation<User[]>;
   
     @ManyToMany(() => Permission, (permission) => permission.roles, { eager: true })
     @JoinTable()
-    permissions: Permission[];
+    permissions: Relation<Permission[]>;
   
     @CreateDateColumn({
       type: "timestamp",

@@ -1,13 +1,12 @@
-import { BaseEntity, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ManyToMany } from "typeorm/browser";
-import { Timestamp } from "typeorm/browser";
-import { Column } from "typeorm/browser";
-import { Quesion } from "./Question.js";
+import { BaseEntity,ManyToMany,Timestamp,Column ,Entity, PrimaryGeneratedColumn, Relation } from "typeorm";
 import { User } from "./User.js";
-import { OneToMany } from "typeorm/browser";
+import { OneToMany } from "typeorm";
+import { Question } from "./Question.js";
 import { Enrollment } from "./Enrollment.js";
+import { Exam_answers } from "./Exam_answers.js";
+import { Response } from "./Response.js";
 
-@Entity("exam")
+@Entity()
   export class Exam extends BaseEntity {
 
     @PrimaryGeneratedColumn('increment')
@@ -17,27 +16,27 @@ import { Enrollment } from "./Enrollment.js";
     name: string;
 
     @Column()
-    duration: Timestamp;
+    duration: number;
 
     @Column()
-    start_time: Timestamp;
+    start_time: number;
 
     @Column()
-    end_time: Timestamp;
+    end_time: number;
 
-    @ManyToMany(() => Quesion, (question) => question.exams)
-    questions: Quesion[];
+    @ManyToMany(() => Question, (question) => question.exams)
+    questions: Relation<Question[]>;
 
-    @ManyToMany(()=>User, (user)=>user.exams)
-    users: User[];
+    @ManyToMany(()=>User, (user)=>user.exams)   
+    users: Relation<User[]>;
     
     @OneToMany(()=> Enrollment, (enrollment)=> enrollment.exam_id)
-    enrollments:Enrollment[];
+    enrollments:Relation<Enrollment[]>;
     
-    // @OneToMany(()=> Exam_Answers, (exam_answer)=> exam_answer.answer)
-    // answers: Exam_Answers[];
+    @OneToMany(()=> Exam_answers, (exam_answer)=> exam_answer.exam)
+    answers: Relation<Exam_answers[]>;
 
-    // @OneToMany(()=> Response, (response)=> response.exam)
-    // responses:Response[];
+    @OneToMany(()=> Response, (response)=> response.exam)
+    responses:Relation<Exam[]>;
 
-  }
+  }     
