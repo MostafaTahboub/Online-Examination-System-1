@@ -9,11 +9,13 @@ import {
     OneToOne,
     ManyToMany,
     JoinTable,
+    ManyToOne,
+    OneToMany,
   } from "typeorm";
   import bcrypt from "bcrypt";
-  import {Profile}  from "./Profile.js";
   import { Role } from "./Role.js";
 import { Exam } from "./Exam.js";
+import { Enrollment } from "./Enrollment.js";
   @Entity('user')
   export class User extends BaseEntity {
     @PrimaryGeneratedColumn("increment")
@@ -34,21 +36,18 @@ import { Exam } from "./Exam.js";
     @Column({ nullable: false })
       email: string;
   
-    @CreateDateColumn({
-          type: "timestamp",
-          default: () => "CURRENT_TIMESTAMP()",
-      })
-      createdAt: Date;
-  
-    @ManyToMany(() => Role, (role) => role.users, {eager: true })
-      roles: Role[];
-    
-    // @OneToOne(() => User)
-    //   @JoinColumn()
-    //     user: User;
+      @ManyToMany(()=> Exam, (exam)=> exam.users)
+      @JoinTable()
+      exams: Exam[];
 
-    @ManyToMany(()=> Exam, (exam)=> exam.users)
-    @JoinTable()
-    exams: Exam[];
+      @ManyToOne(() => Role, (role) => role.users, {eager: true })
+        role: Role;
+      
+      @OneToMany(()=>Enrollment, (enrollment)=> enrollment.user_id)
+      enrollments: Enrollment[];
+      
+      // @OneToMany(()=>ExamAnswer, (examAnswer)=> examAnswer.users)
+      // Answers: ExamAnwer[];
+
   }
   

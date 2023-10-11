@@ -6,6 +6,8 @@ import {
     CreateDateColumn,
     ManyToMany,
     JoinTable,
+    JoinColumn,
+    OneToMany,
   } from "typeorm";
   import { Permission } from "./Permissions.js";
   import { User } from "./User.js";
@@ -17,8 +19,7 @@ import {
     @Column()
     roleName: string;
   
-    @ManyToMany(() => User, (user) => user.roles)
-    @JoinTable()
+    @OneToMany(() => User, (user) => user.role)
     users: User[];
   
     @ManyToMany(() => Permission, (permission) => permission.roles, { eager: true })

@@ -1,36 +1,45 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { ManyToMany } from "typeorm/browser";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
+} from "typeorm";
 import { Exam } from "./Exam.js";
-import { JoinTable } from "typeorm/browser";
-import { ManyToOne } from "typeorm/browser";
-import { Subject } from "typeorm/browser/persistence/Subject.js";
+import { OneToMany } from "typeorm/browser";
 
 @Entity("question")
 export class Quesion extends BaseEntity {
-    @PrimaryGeneratedColumn('rowid')
-    id : number;
+  @PrimaryGeneratedColumn("rowid")
+  id: number;
 
-    @Column()
-    question_text : string;
+  @Column()
+  question_text: string;
 
-    @Column()
-    choice1:string ;
-    @Column()
-    choice2:string ;
-    @Column()
-    choice3:string ;
-    @Column()
-    choice4:string ;
+  @Column()
+  weight: number;
+  
+  @Column()
+  options: JSON;
 
-    @Column()
-    answer:string
+  @Column()
+  answer: string;
+  
+  @Column()
+  order: number;
 
-    @ManyToMany(()=> Exam, (exam) => exam.questions)
-    @JoinTable()
-    exams: Exam[];
+  @ManyToMany(() => Exam, (exam) => exam.questions)
+  @JoinTable()
+  exams: Exam[];
 
-    // @ManyToOne(()=> Subject, (subject)=>subject.questions)
-    // subject: Subject
+  // @ManyToOne(()=> Subject, (subject)=>subject.questions)
+  // subject_id: Subject
 
-    
+  // @ManyToOne(()=> QuestionType, (questionType)=>questionType.questions)
+  // question_type_id: QusetionType;
+
+  // @OneToMany(()=>Exam_Answers, (examAnswer)=> examAnswer.answers)
+  // answers: Exam_Answers[];
 }

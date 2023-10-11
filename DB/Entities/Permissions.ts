@@ -21,10 +21,5 @@ import {
     @ManyToMany(() => Role, (role) => role.permissions)
     roles: Permission[];
     
-    @CreateDateColumn({
-      type: "timestamp",
-      default: () => "CURRENT_TIMESTAMP()",
-    })
-    createdAt: Date;
   }
   
