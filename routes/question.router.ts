@@ -1,6 +1,6 @@
 import express from "express";
 import { getAllQuestions, insertQuestion, updateQuestion } from "../controllers/question.js";
-import { validateCreateQuestion } from "../middlewares/questionValidation.js";
+import { validateCreateQuestion } from "../middleware/validation/questionValidation.js";
 import { Question } from "../DB/Entities/Question.js";
 
 var router = express.Router();

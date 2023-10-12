@@ -7,13 +7,20 @@ import { Role } from "../DB/Entities/Role.js";
 import { symbolName } from "typescript";
 const router = express.Router();
 
-router.post("/register", validateUser, (req, res) => {
-    
+router.post("/register", validateUser, async (req, res) => {
   let user = new User();
   user.userName = req.body.userName;
   user.name = req.body.name;
   user.email = req.body.email;
   user.password = req.body.password;
+  let x = await Role.find({
+    where: {
+      roleName: req.body.type,
+    },
+  }).then((role) => {
+    user.role = role[0] || null;
+    console.log(user.role);
+  });
   user.save();
 });
 
