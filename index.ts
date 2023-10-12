@@ -3,11 +3,12 @@ import express from "express";
 import "./config.js";
 import dataSource from "./DB/dataSource.js";
 import createAdminUser from "./controllers/admin.js";
-import { User } from "./DB/Entities/User.js";
+import home from './routes/home.js'
 
 const app = express();
 
 app.use(express.json());
+app.use('/Home', home);
 
 const PORT = process.env.PORT || 5000;
 
