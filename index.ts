@@ -3,12 +3,10 @@ import express from "express";
 import "./config.js";
 import dataSource from "./DB/dataSource.js";
 import createAdminUser from "./controllers/admin.js";
-import questionRouter from "./routes/question.router.js";
-import questionTypeRotuer from './routes/questionType.router.js'
-import subjectRouter from './routes/subject.js';
 const app = express();
 
 app.use(express.json());
+app.use('/Home', home);
 
 const PORT = process.env.PORT || 5000;
 
