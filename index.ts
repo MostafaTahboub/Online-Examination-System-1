@@ -3,19 +3,22 @@ import express from "express";
 import "./config.js";
 import dataSource from "./DB/dataSource.js";
 import createAdminUser from "./controllers/admin.js";
+import home from "./routes/home.js";
+import questionRouter from "./routes/question.router.js";
+import questionTypeRotuer from "./routes/questionType.router.js";
+import subjectRouter from "./routes/subject.js";
 const app = express();
 
 app.use(express.json());
-app.use('/Home', home);
+app.use("/Home", home);
 
 const PORT = process.env.PORT || 5000;
 
-app.use('/question',questionRouter);
-app.use('/questionType',questionTypeRotuer);
-app.use('/subject',subjectRouter);
+app.use("/question", questionRouter);
+app.use("/questionType", questionTypeRotuer);
+app.use("/subject", subjectRouter);
 
-
-app.get("/", (req, res) => {   
+app.get("/", (req, res) => {
   res.status(200).send("app is running succefully");
 });
 
