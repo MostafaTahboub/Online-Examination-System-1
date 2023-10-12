@@ -4,10 +4,11 @@ import { User } from "../DB/Entities/User.js";
 import { login } from "../controllers/user.js";
 import { authenticate } from "../middleware/auth/authenticate.js";
 import { Role } from "../DB/Entities/Role.js";
-import { symbolName } from "typescript";
 const router = express.Router();
 
 router.post("/register", validateUser, async (req, res) => {
+    console.log(req.body);
+    
   let user = new User();
   user.userName = req.body.userName;
   user.name = req.body.name;
@@ -22,6 +23,7 @@ router.post("/register", validateUser, async (req, res) => {
     console.log(user.role);
   });
   user.save();
+  res.status(201).send("user has been added successfully")
 });
 
 router.post("/login", (req, res) => {
