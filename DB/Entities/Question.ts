@@ -8,6 +8,7 @@ import {
   ManyToOne,
   Relation,
   OneToMany,
+  CreateDateColumn,
 } from "typeorm";
 import { Exam } from "./Exam.js";
 import { QuestionType } from "./question_Types.js";
@@ -18,9 +19,12 @@ import { Subject } from "./Subject.js";
 export class Question extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
+  
+  @Column({nullable:false})
+  name:string
 
   @Column()
-  question_text: string;
+  text: string;
 
   @Column()
   weight: number;
@@ -33,11 +37,17 @@ export class Question extends BaseEntity {
     op_4: string;
   };
 
-  @Column()
+  @Column({nullable:false})
   answer: string;
-
-  @Column()
+  
+  @Column({nullable:false})
   order: number;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => "CURRENT_TIMESTAMP()"
+  })
+  createdAt: Date;
 
   @ManyToMany(() => Exam, (exam) => exam.questions)
   @JoinTable()
@@ -47,8 +57,10 @@ export class Question extends BaseEntity {
   subject: Relation<Subject>
 
   @ManyToOne(() => QuestionType, (questionType) => questionType.question)
-  question_type: Relation<QuestionType[]>;
+  type: Relation<QuestionType>;
 
   @OneToMany(() => Exam_answers, (examAnswer) => examAnswer.question)
   answers: Relation<Exam_answers[]>;
+
+  
 }
