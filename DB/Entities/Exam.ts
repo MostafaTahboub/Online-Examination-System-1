@@ -14,14 +14,15 @@ export class Exam extends BaseEntity {
   @Column()
   name: string;
 
-  @Column()
+  @Column({type:'int',default:0})
   duration: number;
 
-  @Column()
-  start_time: number;
-
-  @Column()
-  end_time: number;
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  startTime: Date;
+  
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  endTime: Date;
+  
 
   @ManyToMany(() => Question, (question) => question.exams)
   questions: Relation<Question[]>;

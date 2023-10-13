@@ -10,7 +10,6 @@ router.post("/register", validateUser, async (req, res) => {
     console.log(req.body);
     
   let user = new User();
-  user.userName = req.body.userName;
   user.name = req.body.name;
   user.email = req.body.email;
   user.password = req.body.password;
@@ -25,6 +24,7 @@ router.post("/register", validateUser, async (req, res) => {
   user.save();
   res.status(201).send("user has been added successfully")
 });
+
 
 router.post("/login", (req, res) => {
   const email = req.body.email;
@@ -54,5 +54,6 @@ router.get("/logout", authenticate, (req, res) => {
   res.cookie("token", "", { maxAge: -1 });
   res.send("See You Soon My User");
 });
+
 
 export default router;

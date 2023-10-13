@@ -1,6 +1,7 @@
 import express from 'express';
 import { User } from '../../DB/Entities/User.js';
 import { Permission } from '../../DB/Entities/Permissions.js';
+
 const authorize = (api: string) => {
     return (
         req: express.Request,
