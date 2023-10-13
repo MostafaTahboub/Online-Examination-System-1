@@ -25,7 +25,7 @@ const validateUser = async (
   }
 
   const test = await User.findOneBy({
-    userName: req.body.userName,
+    name: req.body.userName,
   });
 
   if (test) {

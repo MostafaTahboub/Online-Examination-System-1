@@ -4,18 +4,17 @@ import { User } from "../DB/Entities/User.js";
 import { login } from "../controllers/user.js";
 import { authenticate } from "../middleware/auth/authenticate.js";
 import { Role } from "../DB/Entities/Role.js";
-import { symbolName } from "typescript";
 const router = express.Router();
 
+// need some edit 
 router.post("/register", validateUser, (req, res) => {
-    
   let user = new User();
-  user.userName = req.body.userName;
   user.name = req.body.name;
   user.email = req.body.email;
   user.password = req.body.password;
   user.save();
 });
+
 
 router.post("/login", (req, res) => {
   const email = req.body.email;
@@ -45,5 +44,6 @@ router.get("/logout", authenticate, (req, res) => {
   res.cookie("token", "", { maxAge: -1 });
   res.send("See You Soon My User");
 });
+
 
 export default router;
