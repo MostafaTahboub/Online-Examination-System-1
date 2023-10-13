@@ -6,13 +6,23 @@ import { authenticate } from "../middleware/auth/authenticate.js";
 import { Role } from "../DB/Entities/Role.js";
 const router = express.Router();
 
-// need some edit 
-router.post("/register", validateUser, (req, res) => {
+router.post("/register", validateUser, async (req, res) => {
+    console.log(req.body);
+    
   let user = new User();
   user.name = req.body.name;
   user.email = req.body.email;
   user.password = req.body.password;
+  let x = await Role.find({
+    where: {
+      roleName: req.body.type,
+    },
+  }).then((role) => {
+    user.role = role[0] || null;
+    console.log(user.role);
+  });
   user.save();
+  res.status(201).send("user has been added successfully")
 });
 
 
