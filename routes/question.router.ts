@@ -2,10 +2,12 @@ import express from "express";
 import { getAllQuestions, insertQuestion, updateQuestion } from "../controllers/question.js";
 import { validateCreateQuestion } from "../middleware/validation/questionValidation.js";
 import { Question } from "../DB/Entities/Question.js";
+import { authenticate } from "../middleware/auth/authenticate.js";
+import { authorize } from "../middleware/auth/authorize.js";
 
 var router = express.Router();
 
-router.post('/new', validateCreateQuestion, async (req, res) => {
+router.post('/new',authenticate, authorize("Add_Question"), validateCreateQuestion, async (req, res) => {
     try {
         await insertQuestion(req, res);
     } catch (error) {
@@ -13,7 +15,7 @@ router.post('/new', validateCreateQuestion, async (req, res) => {
     }
 });
 
-router.put('/edit', async (req, res) => {
+router.put('/edit',authenticate, authorize("Update_Question"), async (req, res) => {
 
     try {
         await updateQuestion(req, res);

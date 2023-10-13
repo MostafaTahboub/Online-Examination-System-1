@@ -89,7 +89,7 @@ const updateExam = (async (req: Request, res: Response) => {
 const createExamRandom=async(req:Request,res:Response)=>{
 
     const { name, startTime, endTime, duration } = req.body;
-    const numberOfRandomQuestions = 10;
+    const numberOfRandomQuestions = req.body.numberOfQuestions;
     
     const exam = new Exam();
     exam.name=name;

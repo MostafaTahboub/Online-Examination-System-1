@@ -2,10 +2,12 @@ import express from 'express';
 import { createExam, createExamRandom, updateExam } from '../controllers/exam.js';
 import { validateCreateExam } from '../middleware/validation/examValidation.js';
 import { Exam } from '../DB/Entities/Exam.js';
+import { authenticate } from '../middleware/auth/authenticate.js';
+import { authorize } from '../middleware/auth/authorize.js';
 
 var router = express.Router();
 
-router.post('/new', validateCreateExam, async (req, res) => {
+router.post('/new', authenticate, authorize('ADD_EXAM'), validateCreateExam, async (req, res) => {
 
     try {
         await createExam(req, res);

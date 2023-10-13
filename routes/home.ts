@@ -7,7 +7,6 @@ import { Role } from "../DB/Entities/Role.js";
 const router = express.Router();
 
 router.post("/register", validateUser, async (req, res) => {
-    console.log(req.body);
     
   let user = new User();
   user.name = req.body.name;

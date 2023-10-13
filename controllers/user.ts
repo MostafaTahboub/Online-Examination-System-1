@@ -3,6 +3,14 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Role } from "../DB/Entities/Role.js";
 
+const inserUser = async(payload:User) => {
+  let user = new User();
+  const newuser = User.create({
+    ...payload
+  });
+  user.save();
+};
+
 
 const login = async (email: string, password: string) => {
   try {

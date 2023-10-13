@@ -6,7 +6,6 @@ let createAdminUser = async () => {
   let admin = await User.findOneBy({ name: "Root" });
   if (admin === null) {
     const permission = new Permission();
-    permission.id = 5;
     permission.name = "admin";
     await permission.save();
 
