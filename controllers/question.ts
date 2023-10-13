@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { Question } from "../DB/Entities/Question.js";
+import { Subject } from "../DB/Entities/Subject.js";
 
 const insertQuestion = (async (req: Request, res: Response) => {
 
-    const { text, name, weight, options, answer, order, subjectId, question_TypeId } = req.body;
+    const { text, name, weight, options, answer, order, subjectName, question_TypeId } = req.body;
 
     const newQuestion = new Question();
     newQuestion.name = name;
@@ -11,9 +12,21 @@ const insertQuestion = (async (req: Request, res: Response) => {
     newQuestion.weight = weight;
     newQuestion.answer = answer;
     newQuestion.order = order;
-    newQuestion.subject = subjectId;
     newQuestion.type = question_TypeId;
     newQuestion.options = options;
+
+    const existingSubject = await Subject.findOneBy(subjectName);
+
+    if (!existingSubject) {
+        const newSubject = new Subject();
+        newSubject.name = req.body.subjectName;
+        await newSubject.save();
+        newQuestion.subject = newSubject;
+    } else {
+
+        newQuestion.subject = existingSubject;
+    }
+
 
     await newQuestion.save()
         .then(() => {
@@ -62,11 +75,11 @@ const updateQuestion = (async (req: Request, res: Response) => {
 
 const getAllQuestions = (async (req: Request, res: Response) => {
     try {
-        const page = Number(req.query.page||'1');
-        const pageSize = Number(req.query.size||'10');
+        const page = Number(req.query.page || '1');
+        const pageSize = Number(req.query.size || '10');
 
         const [items, total] = await Question.findAndCount({
-            skip: pageSize*(page - 1),
+            skip: pageSize * (page - 1),
             take: pageSize,
             order: {
                 createdAt: 'ASC'
@@ -88,4 +101,4 @@ const getAllQuestions = (async (req: Request, res: Response) => {
 
 
 
-export { insertQuestion, updateQuestion ,getAllQuestions };
+export { insertQuestion, updateQuestion, getAllQuestions };

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
+import { Question } from '../../DB/Entities/Question.js';
 
-function validateCreateQuestion(req:Request,res:Response,next:NextFunction){
+async function validateCreateQuestion(req:Request,res:Response,next:NextFunction){
 
 const {name,text,answer,order}=req.body;
 if (!text)
@@ -10,6 +11,12 @@ if (!text)
 if (!name)
 {
     return res.status(400).json({err:"name is required"});
+}
+if(name){
+  const existingName= await Question.findOneBy({name:name});
+  if (existingName){
+    return res.status(409).send("try another name , there are question existing with this name ");
+  }
 }
 if (!answer)
 {
