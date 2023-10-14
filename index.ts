@@ -8,6 +8,7 @@ import questionRouter from "./routes/question.router.js";
 import questionTypeRotuer from "./routes/questionType.router.js";
 import subjectRouter from "./routes/subject.js";
 import examRouter from './routes/Exam.js';
+import enrollmentRouter from './routes/enrollment.js'
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use("/question", questionRouter);
 app.use("/questionType", questionTypeRotuer);
 app.use("/subject", subjectRouter);
 app.use('/exam',examRouter);
+app.use('/enrollment',enrollmentRouter);
 
 app.get("/", (req, res) => {
   res.status(200).send("app is running succefully");

@@ -19,7 +19,7 @@ import { Response } from "./Response.js";
 
 @Entity('user')
 export class User extends BaseEntity {
-  
+
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -40,7 +40,7 @@ export class User extends BaseEntity {
 
   @ManyToMany(() => Exam, (exam) => exam.users)
   @JoinTable()
-  exams:Relation<Exam[]>;
+  exams: Relation<Exam[]>;
 
   @ManyToOne(() => Role, (role) => role.users, { eager: true })
   role: Relation<Role>;
@@ -49,9 +49,9 @@ export class User extends BaseEntity {
   enrollments: Relation<Enrollment[]>;
 
   @OneToMany(() => Exam_answers, (examAnswer) => examAnswer.user)
-  Answers: Relation<Exam_answers[]>;   
+  Answers: Relation<Exam_answers[]>;
 
-  @OneToMany(()=>Response,(response)=>response.user)
-  responses:Relation<Response[]>
+  @OneToMany(() => Response, (response) => response.user)
+  responses: Relation<Response[]>
 
 }

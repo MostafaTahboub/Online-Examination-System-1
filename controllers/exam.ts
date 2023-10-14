@@ -11,32 +11,40 @@ const createExam = async (req: Request, res: Response) => {
     const { name, duration, endTime, startTime, questionsIds } = req.body;
     const newExam = new Exam();
     newExam.name = name;
-    newExam.duration = duration;
-
+    
     const startTimeMoment = moment(startTime, 'h:mm A');
-
+    
     const endTimeMoment = moment(endTime, 'h:mm A');
-
+    
     if (!startTimeMoment.isValid()) {
         return res.status(400).json({ error: 'Invalid start time format' });
     }
-
+    
     if (!endTimeMoment.isValid()) {
         return res.status(400).json({ error: 'Invalid start end format' });
     }
 
+    
     const questions = await Question.find({
         where: {
             id: In(questionsIds)
         }
     });
-
-    const startTimeDate = startTimeMoment.toDate(); // As JavaScript Date
-    const endTimeDate = endTimeMoment.toDate(); // As JavaScript Date
+    
+    newExam.questions = questions;
+    
+    const startTimeDate = startTimeMoment.toDate(); 
+    const endTimeDate = endTimeMoment.toDate(); 
+    
     newExam.startTime = startTimeDate;
     newExam.endTime = endTimeDate;
-    newExam.questions = questions;
+    
+    const durationMilliseconds = newExam.endTime.getTime() - newExam.startTime.getTime();
+    const durationMinutes = Math.floor(durationMilliseconds / (1000 * 60)); 
 
+    newExam.duration = durationMinutes;
+    
+    
     await newExam.save()
 }
 

@@ -10,7 +10,7 @@ router.post('/new', validateCreateExam, async (req, res) => {
     try {
         await createExam(req, res);
         res.status(201).send("Exam created succeffylly");
-
+        
     } catch (error) {
         console.error("Error ocurred while creating the Exam" + error);
         res.status(500).send("something went wrong when trying to create the Exam");
@@ -19,9 +19,8 @@ router.post('/new', validateCreateExam, async (req, res) => {
 });
 
 // need some validation here 
-router.post('/newByRandom' ,async (req, res) => {
+router.post('/newByRandom', async (req, res) => {
     try {
-
         await createExamRandom(req, res);
 
     } catch (error) {

@@ -50,6 +50,10 @@ router.delete('/deletByName', async (req, res) => {
         }
 
         else {
+            if (!existingQuestion.exams.length){
+                return res.status(400).send("can't delete question , question is exist in  exam");
+            }
+         
             await existingQuestion.remove();
             res.status(200).send("qustion removed succefully");
         }
