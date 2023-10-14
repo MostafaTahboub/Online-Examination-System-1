@@ -15,13 +15,11 @@ let createAdminUser = async () => {
     await role.save();
 
     const student = new Role();
-    student.roleName = "user";
-    student.permissions = [permission];
+    student.roleName = "student";
     await student.save();
     
     const instructor = new Role();
     instructor.roleName = "instructor";
-    instructor.permissions = [permission];
     await instructor.save();
 
     const user = new User();

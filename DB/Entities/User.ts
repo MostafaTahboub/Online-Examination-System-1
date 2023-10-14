@@ -23,6 +23,9 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
+  @Column()
+  username: string;
+
   @Column({ nullable: false, length: 255 })
   name: string;
 
