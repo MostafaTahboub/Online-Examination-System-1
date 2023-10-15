@@ -8,6 +8,11 @@ export class Response extends BaseEntity{
 @PrimaryGeneratedColumn('increment')
 id :number
 
+@Column({ type: 'enum',
+enum: ['Assigned', 'inProgress', 'Done'],
+default: 'Assigned'})
+status : string;
+
 @ManyToOne(()=>Exam,(exam)=>exam.responses)
 exam:Relation<Exam[]>
 

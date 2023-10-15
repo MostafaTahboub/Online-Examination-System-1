@@ -10,7 +10,11 @@ import subjectRouter from "./routes/subject.js";
 import examRouter from './routes/Exam.js';
 import Permission from "./routes/Permission.js";
 import role from "./routes/Role.js";
+
+import response from "./routes/Response.js";
+
 import enrollmentRouter from './routes/enrollment.js'
+
 
 const app = express();
 
@@ -19,6 +23,7 @@ app.use("/Home", home);
 
 const PORT = process.env.PORT || 5000;
 
+app.use("/response", response)
 app.use("/question", questionRouter);
 app.use("/questionType", questionTypeRotuer);
 app.use("/subject", subjectRouter);

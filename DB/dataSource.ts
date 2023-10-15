@@ -18,6 +18,7 @@ const dataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   entities: [User, Role, Permission, Question, Exam, Subject, Enrollment, Exam_answers, QuestionType, Response],
+  migrations:['./**/migration/*.ts'],
   synchronize: true,
   logging: false,
 });
