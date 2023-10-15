@@ -10,7 +10,11 @@ import subjectRouter from "./routes/subject.js";
 import examRouter from './routes/Exam.js';
 import Permission from "./routes/Permission.js";
 import role from "./routes/Role.js";
+
 import response from "./routes/Response.js";
+
+import enrollmentRouter from './routes/enrollment.js'
+
 
 const app = express();
 
@@ -26,6 +30,7 @@ app.use("/subject", subjectRouter);
 app.use('/exam',examRouter);
 app.use('/permission', Permission);
 app.use('/role', role);
+app.use('/enrollment',enrollmentRouter);
 
 app.get("/", (req, res) => {
   res.status(200).send("app is running succefully");
