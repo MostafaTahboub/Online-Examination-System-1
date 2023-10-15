@@ -8,7 +8,8 @@ const router = express.Router();
 
 router.post("/register", validateUser, async (req, res) => {
     
-  let user = new User();
+  try{let user = new User();
+  user.username = req.body.userName;
   user.name = req.body.name;
   user.email = req.body.email;
   user.password = req.body.password;
@@ -21,7 +22,10 @@ router.post("/register", validateUser, async (req, res) => {
     console.log(user.role);
   });
   user.save();
-  res.status(201).send("user has been added successfully")
+  res.status(201).send("user has been added successfully")}
+   catch (error) {
+    res.status(400).send(error)
+  }
 });
 
 

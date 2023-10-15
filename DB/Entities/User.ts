@@ -20,7 +20,7 @@ import { Response } from "./Response.js";
 @Entity('user')
 export class User extends BaseEntity {
   
-  @PrimaryGeneratedColumn("increment")
+  @PrimaryGeneratedColumn("identity")
   id: number;
 
   @Column()
