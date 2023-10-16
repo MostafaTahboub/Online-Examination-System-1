@@ -4,6 +4,7 @@ import { User } from "../DB/Entities/User.js";
 import { login } from "../controllers/user.js";
 import { authenticate } from "../middleware/auth/authenticate.js";
 import { Role } from "../DB/Entities/Role.js";
+import { validateUserLogin } from "../middleware/validation/login.js";
 const router = express.Router();
 
 router.post("/register", validateUser, async (req, res) => {
@@ -28,7 +29,7 @@ router.post("/register", validateUser, async (req, res) => {
   }
 });
 
-router.post("/login", (req, res) => {
+router.post("/login", validateUserLogin, async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
