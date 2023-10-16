@@ -3,14 +3,13 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Role } from "../DB/Entities/Role.js";
 
-const inserUser = async(payload:User) => {
+const inserUser = async (payload: User) => {
   let user = new User();
   const newuser = User.create({
-    ...payload
+    ...payload,
   });
   user.save();
 };
-
 
 const login = async (email: string, password: string) => {
   try {
@@ -29,7 +28,7 @@ const login = async (email: string, password: string) => {
         process.env.SECRET_KEY || "",
         { expiresIn: "10m" }
       );
-      return {token, fullName: user.name};
+      return { token, fullName: user.name };
     } else {
       throw "Invalid Username or password!";
     }

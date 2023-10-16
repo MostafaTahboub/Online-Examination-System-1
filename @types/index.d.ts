@@ -1,4 +1,4 @@
-interface GetAll{
-    page: string;
-    pageSize: string;
+interface GetAll {
+  page: string;
+  pageSize: string;
 }

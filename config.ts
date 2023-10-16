@@ -1,7 +1,5 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config({
-    // path: .env
-    path: process.env.NODE_ENV
-        ? `.env.${process.env.NODE_ENV}`
-        : '.env'
+  // path: .env
+  path: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : ".env",
 });

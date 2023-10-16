@@ -1,23 +1,28 @@
-import { ManyToOne, Relation,BaseEntity,Entity, CreateDateColumn, PrimaryGeneratedColumn } from "typeorm";
+import {
+  ManyToOne,
+  Relation,
+  BaseEntity,
+  Entity,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "./User.js";
 import { Exam } from "./Exam.js";
 
 @Entity()
+export class Enrollment extends BaseEntity {
+  @PrimaryGeneratedColumn("increment")
+  id: number;
 
-export class Enrollment extends BaseEntity{
+  @ManyToOne(() => User, (user) => user.enrollments)
+  user: Relation<User>;
 
-    @PrimaryGeneratedColumn('increment')
-    id: number;
+  @ManyToOne(() => Exam, (exam) => exam.enrollments)
+  exam: Relation<Exam>;
 
-    @ManyToOne(()=> User, (user)=> user.enrollments)
-    user: Relation<User>;
-
-    @ManyToOne(()=> Exam, (exam)=> exam.enrollments)
-    exam: Relation<Exam>;
-
-    @CreateDateColumn({
-        type: "timestamp",
-        default: () => "CURRENT_TIMESTAMP()",
-      })
-      createdAt: Date;
+  @CreateDateColumn({
+    type: "timestamp",
+    default: () => "CURRENT_TIMESTAMP()",
+  })
+  createdAt: Date;
 }

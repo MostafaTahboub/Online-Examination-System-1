@@ -32,7 +32,7 @@ const validateUser = async (
     return res.status(500).send("choose another userName :)");
   }
 
-  if (user.type !== "instructor" && user.type !== 'student') {
+  if (user.type !== "instructor" && user.type !== "student") {
     errorList.push(`There are no such role!`);
   }
 

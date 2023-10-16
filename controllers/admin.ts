@@ -17,7 +17,7 @@ let createAdminUser = async () => {
     const student = new Role();
     student.roleName = "student";
     await student.save();
-    
+
     const instructor = new Role();
     instructor.roleName = "instructor";
     await instructor.save();

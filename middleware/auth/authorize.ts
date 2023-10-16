@@ -8,9 +8,9 @@ const authorize = (api: string) => {
     next: express.NextFunction
   ) => {
     const permissions: Permission[] = res.locals.user.role.permissions || [];
-     if (
+    if (
       permissions.filter((p) => {
-        return p.name === api || p.name === "admin"
+        return p.name === api || p.name === "admin";
       }).length > 0
     ) {
       next();

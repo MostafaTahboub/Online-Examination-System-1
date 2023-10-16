@@ -7,27 +7,26 @@ import { Role } from "../DB/Entities/Role.js";
 const router = express.Router();
 
 router.post("/register", validateUser, async (req, res) => {
-    
-  try{let user = new User();
-  user.username = req.body.userName;
-  user.name = req.body.name;
-  user.email = req.body.email;
-  user.password = req.body.password;
-  let x = await Role.find({
-    where: {
-      roleName: req.body.type,
-    },
-  }).then((role) => {
-    user.role = role[0] || null;
-    console.log(user.role);
-  });
-  user.save();
-  res.status(201).send("user has been added successfully")}
-   catch (error) {
-    res.status(400).send(error)
+  try {
+    let user = new User();
+    user.username = req.body.userName;
+    user.name = req.body.name;
+    user.email = req.body.email;
+    user.password = req.body.password;
+    let x = await Role.find({
+      where: {
+        roleName: req.body.type,
+      },
+    }).then((role) => {
+      user.role = role[0] || null;
+      console.log(user.role);
+    });
+    user.save();
+    res.status(201).send("user has been added successfully");
+  } catch (error) {
+    res.status(400).send(error);
   }
 });
-
 
 router.post("/login", (req, res) => {
   const email = req.body.email;
@@ -57,6 +56,5 @@ router.get("/logout", authenticate, (req, res) => {
   res.cookie("token", "", { maxAge: -1 });
   res.send("See You Soon My User");
 });
-
 
 export default router;

@@ -17,12 +17,21 @@ const dataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [User, Role, Permission, Question, Exam, Subject, Enrollment, Exam_answers, QuestionType, Response],
-  migrations:['./**/migration/*.ts'],
+  entities: [
+    User,
+    Role,
+    Permission,
+    Question,
+    Exam,
+    Subject,
+    Enrollment,
+    Exam_answers,
+    QuestionType,
+    Response,
+  ],
+  migrations: ["./**/migration/*.ts"],
   synchronize: true,
   logging: false,
 });
-
-
 
 export default dataSource;

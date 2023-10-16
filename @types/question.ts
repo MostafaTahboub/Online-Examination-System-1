@@ -1,7 +1,6 @@
-export interface question{
-id:number,
-name:string,
-text:string,
-weight:number,
-
+export interface question {
+  id: number;
+  name: string;
+  text: string;
+  weight: number;
 }
