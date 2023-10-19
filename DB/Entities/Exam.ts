@@ -31,7 +31,7 @@ export class Exam extends BaseEntity {
   @Column("timestamp", { default: () => "CURRENT_TIMESTAMP" })
   endTime: Date;
 
-  @ManyToMany(() => Question, (question) => question.exams)
+  @ManyToMany(() => Question, (question) => question.exams, {eager: true})
   questions: Relation<Question[]>;
 
   @ManyToMany(() => User, (user) => user.exams)
@@ -40,7 +40,7 @@ export class Exam extends BaseEntity {
   @OneToMany(() => Enrollment, (enrollment) => enrollment.exam)
   enrollments: Relation<Enrollment[]>;
 
-  @OneToMany(() => Exam_answers, (exam_answer) => exam_answer.exam)
+  @OneToMany(() => Exam_answers, (exam_answer) => exam_answer.exam, {eager: true})
   answers: Relation<Exam_answers[]>;
 
   @OneToMany(() => Response, (response) => response.exam)

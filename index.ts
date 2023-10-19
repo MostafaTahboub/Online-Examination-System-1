@@ -12,6 +12,7 @@ import Permission from "./routes/Permission.js";
 import role from "./routes/Role.js";
 import response from "./routes/Response.js";
 import enrollmentRouter from "./routes/enrollment.js";
+import baseLogger from "./log.js";
 
 const app = express();
 
