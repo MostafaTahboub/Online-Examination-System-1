@@ -4,6 +4,7 @@ import { authorize } from "../middleware/auth/authorize.js";
 import { Permission } from "../DB/Entities/Permissions.js";
 import dataSource from "../DB/dataSource.js";
 import { Role } from "../DB/Entities/Role.js";
+import baseLogger from "../log.js";
 const router = express.Router();
 router.post("/new_permission", async (req, res) => {
   try {
@@ -20,11 +21,14 @@ router.post("/new_permission", async (req, res) => {
       permission.name = req.body.permissionName;
 
       permission.save();
+      baseLogger.info(`New permission has been added by the admin: ${permission.name}`)
       res.status(201).send("Permission has been added succefully!");
     } else {
+      baseLogger.info(`Tying to insert new Permission with the same name of existing one`);
       res.send("There ara a Permission with this name!");
     }
   } catch (error) {
+    baseLogger.error(`Error while creating new permission: ${error}`)
     res.status(500).send("Something wrong happened!");
     console.error(error);
   }
@@ -36,8 +40,10 @@ router.get("/all", authenticate, authorize("admin"), async (req, res) => {
       .select("name")
       .from(Permission, "name")
       .getMany();
+      baseLogger.info(`All permission names has been retrived for the admin`);
     return res.status(200).json({ permissions });
   } catch (error) {
+    baseLogger.error(`Error while retriving the permissions names by the admin: ${error}`)
     res.status(404).send("somthing wrong happend");
   }
 });
@@ -60,10 +66,12 @@ router.put(
         name: req.body.permissionName,
       });
       if (role === null || permission === null) {
+        baseLogger.error(`Error while assigning permission to role: one of them or both not exist`);
         res.send("invalid role or permission name");
       } else {
         role.permissions = [...role.permissions, permission];
         role.save();
+        baseLogger.info(`Assigning permission: ${permission.name} to role: ${role.roleName} was successful`);
         res.status(200).send("permission assigned to the role");
       }
     } catch (error) {}

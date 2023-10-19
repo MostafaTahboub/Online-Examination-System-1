@@ -5,6 +5,7 @@ import { login } from "../controllers/user.js";
 import { authenticate } from "../middleware/auth/authenticate.js";
 import { Role } from "../DB/Entities/Role.js";
 import { validateUserLogin } from "../middleware/validation/login.js";
+import baseLogger from "../log.js";
 const router = express.Router();
 
 router.post("/register", validateUser, async (req, res) => {
@@ -23,8 +24,10 @@ router.post("/register", validateUser, async (req, res) => {
       console.log(user.role);
     });
     user.save();
+    baseLogger.info(`new ${Role.name} has been registered`);
     res.status(201).send("user has been added successfully");
   } catch (error) {
+    baseLogger.error(`Error thrown while register: ${error}`);
     res.status(400).send(error);
   }
 });
@@ -44,18 +47,22 @@ router.post("/login", validateUserLogin, async (req, res) => {
       res.cookie("token", data.token, {
         maxAge: 30 * 60 * 1000,
       });
+      baseLogger.info(`New login from ( ${data.fullName} ) user`)
       res.send();
     })
     .catch((err) => {
+      baseLogger.info("Trying to login with invalid credintials");
       res.status(401).send(err);
     });
 });
 
 router.get("/logout", authenticate, (req, res) => {
+  baseLogger.info(`${req.cookies['fullName']} has just logged out`)
   res.cookie("fullName", "", { maxAge: -1 });
   res.cookie("logintTime", "", { maxAge: -1 });
   res.cookie("token", "", { maxAge: -1 });
   res.send("See You Soon My User");
+  
 });
 
 export default router;

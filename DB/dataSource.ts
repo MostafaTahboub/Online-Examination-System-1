@@ -31,7 +31,7 @@ const dataSource = new DataSource({
   ],
   migrations: ["./**/migration/*.ts"],
   synchronize: true,
-  logging: false,
+  logging: true,
 });
 
 export default dataSource;

@@ -21,7 +21,7 @@ export class Response extends BaseEntity {
   })
   status: string;
 
-  @ManyToOne(() => Exam, (exam) => exam.responses)
+  @ManyToOne(() => Exam, (exam) => exam.responses, {eager: true})
   exam: Relation<Exam[]>;
 
   @ManyToOne(() => User, (user) => user.responses)

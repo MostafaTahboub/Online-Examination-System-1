@@ -6,6 +6,7 @@ import { Permission } from "../DB/Entities/Permissions.js";
 import dataSource from "../DB/dataSource.js";
 import { User } from "../DB/Entities/User.js";
 import { Like } from "typeorm";
+import baseLogger from "../log.js";
 const router = express.Router();
 
 router.post("/newRole", authenticate, authorize("admin"), async (req, res) => {
@@ -48,13 +49,15 @@ router.post("/newRole", authenticate, authorize("admin"), async (req, res) => {
       }
       role.permissions = perm;
       role.save();
+      baseLogger.info(`New Rle has been added be admin: ${role.roleName}`);
       res.status(201).send("Role has been added succefully!");
     } else {
+      baseLogger.info(`The admin trying to add new role with name already exist`);
       res.send("There are a Role with this name!");
     }
   } catch (error) {
+    baseLogger.error(`Error occured while creating new Role: ${error}`);
     res.status(500).send("Something wrong happened!");
-    console.error(error);
   }
 });
 
@@ -65,8 +68,10 @@ router.get("/all", authenticate, authorize("admin"), async (req, res) => {
       .select("roleName")
       .from(Role, "roleName")
       .getMany();
+      baseLogger.info(`The admin view the existed Roles`);
     return res.status(200).json({ roles });
   } catch (error) {
+    baseLogger.error(`Error while seeing the Roles by admin: ${error}`);
     res.status(404).send("somthing wrong happend");
   }
 });
@@ -76,22 +81,21 @@ router.post(
   "/assign_role_to_user",
   authenticate,
   authorize("admin"),
-  (req, res) => {
+  async(req, res) => {
     let x: Role | null;
     const roleName = req.body.roleName;
     const userName = req.body.username;
-    let role = Role.findOneBy({ roleName: roleName }).then((rle) => (x = rle));
-    let user = User.findOneBy({ username: userName }).then((usr) => {
-      if (x === null || usr === null) {
+    let role = await Role.findOneBy({ roleName: roleName }).then((rle) => (x = rle));
+    let user =  await User.findOneBy({ username: userName })
+      if (role === null || user === null) {
+        baseLogger.error(`Trying to add role for user one of them or both not exist`);
         res.status(404).send("Can't find User or the Role");
       } else {
-        usr.role = x;
-        console.log(usr);
-        console.log(role);
-
-        usr.save();
+        user.role = role;
+        user.save();
       }
-    });
+    
+    baseLogger.info(`The Role ${role?.roleName} for the user ${user?.name}`)
     res.status(200).send("Role has been assigned to the user");
   }
 );
