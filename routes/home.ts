@@ -39,7 +39,7 @@ router.post("/login", validateUserLogin, async (req, res) => {
   login(email, password)
     .then((data) => {
       res.cookie("fullName", data.fullName, {
-        maxAge: 60 * 60 * 1000,
+        maxAge: 60 * 60 * 1000,    
       });
       res.cookie("loginTime", Date.now(), {
         maxAge: 60 * 60 * 1000,

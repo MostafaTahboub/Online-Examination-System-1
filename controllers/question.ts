@@ -2,87 +2,48 @@ import { Request, Response } from "express";
 import { Question } from "../DB/Entities/Question.js";
 import { Subject } from "../DB/Entities/Subject.js";
 
-const insertQuestion = async (req: Request, res: Response) => {
-  const {
-    text,
-    name,
-    weight,
-    options,
-    answer,
-    order,
-    subjectName,
-    question_TypeId,
-  } = req.body;
 
-  const newQuestion = new Question();
-  newQuestion.name = name;
-  newQuestion.text = text;
-  newQuestion.weight = weight;
-  newQuestion.answer = answer;
-  newQuestion.order = order;
-  newQuestion.type = question_TypeId;
-  newQuestion.options = options;
+const updateQuestion = (async (req: Request, res: Response) => {
 
-  const existingSubject = await Subject.findOneBy(subjectName);
+    const id = Number(req.params.id);
+    const question = await Question.findOneBy({ id: id });
 
-  if (!existingSubject) {
-    const newSubject = new Subject();
-    newSubject.name = req.body.subjectName;
-    await newSubject.save();
-    newQuestion.subject = newSubject;
-  } else {
-    newQuestion.subject = existingSubject;
-  }
+    if (question === null) {
+        return res.status(404).json({ msg: 'Question not found' });
+    }
+    const questionData = req.body;
 
-  await newQuestion
-    .save()
-    .then(() => {
-      res.status(201).json({
-        msg: "question created succefully ",
-        qustion: newQuestion,
-      });
-    })
-    .catch((err) => {
-      console.error("failed to create this quesion " + err);
-      res.status(500).json({ msg: "Error creating question " });
-    });
-};
+    const subject = await Subject.findOneBy({ name: questionData.subjectName });
 
-const updateQuestion = async (req: Request, res: Response) => {
-  const questionName = String(req.query.name);
-  const existingQuestion = await Question.findOneBy({ name: questionName });
+    if (subject) {
 
-  if (existingQuestion === null) {
-    return res.status(404).json({ msg: "Question not found" });
-  }
+        question.text = questionData.text;
+        question.type = questionData.type;
+        question.weight = questionData.weight;
+        question.subject = subject;
 
-  const { text, name, weight, options, answer, order } = req.body;
+    }
 
-  existingQuestion.name = name;
-  existingQuestion.text = text;
-  existingQuestion.answer = answer;
-  existingQuestion.weight = weight;
-  existingQuestion.order = order;
+    if (question.type === 'TrueFalse') {
+        question.answer = questionData.answer;
+    } else if (question.type === 'MultipleChoice') {
+        question.options = questionData.options;
+        question.correctAnswer = questionData.correctAnswer;
+    } else if (question.type === 'FillInTheBlank') {
+        question.blanks = questionData.blanks;
+        question.blankAnswer = questionData.blankAnswer;
+    }
 
-  if (existingQuestion.options !== null) {
-    existingQuestion.options = options;
-  }
-
-  await existingQuestion
-    .save()
-    .then(() => {
-      res
-        .status(200)
-        .json({
-          msg: "question has been upadated successfully ",
-          existingQuestion,
+    await question.save()
+        .then(() => {
+            res.status(200).json({ msg: "question has been upadated successfully ", question });
+        })
+        .catch((err) => {
+            console.error("something went wrong while updateing Q " + err);
+            res.status(500).json({ msg: 'Failed to update question ' });
         });
-    })
-    .catch((err) => {
-      console.error("something went wrong while updateing Q " + err);
-      res.status(500).json({ msg: "Failed to update question " });
-    });
-};
+});
+
 
 const getAllQuestions = async (req: Request, res: Response) => {
   try {
@@ -109,4 +70,4 @@ const getAllQuestions = async (req: Request, res: Response) => {
   }
 };
 
-export { insertQuestion, updateQuestion, getAllQuestions };
+export { updateQuestion, getAllQuestions };

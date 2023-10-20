@@ -12,41 +12,37 @@ const validateUserEnrollment = async (
 
   if (!existingUser) {
     return res.status(404).send("there are no user with this id ");
-  } else {
+  }
+  else {
+
     if (existingUser.role.roleName != "user") {
       return res.status(403).send("this user is not a student");
-    } else {
+
+    }
+    else {
       next();
     }
   }
-};
+}
 
-const validateExamEnrollment = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { examId } = req.body;
-  const existingExam = await Exam.findOneBy({ id: examId });
-  const currentTime = new Date();
+  const validateExamEnrollment = async (req: Request, res: Response, next: NextFunction) => {
 
-  if (!existingExam) {
-    return res.status(404).send("there are no exam with this Id");
-  } else {
-    if (currentTime > existingExam.endTime) {
-      return res
-        .status(403)
-        .send("Enrollment is not allowed becasuse the exam has ended");
-    } else if (currentTime < existingExam.startTime) {
-      return res
-        .status(403)
-        .send(
-          `Enrollment is not allowed becasuse the exam hasn't started yet, startTime: ${existingExam.startTime} `
-        );
-    } else {
+    const { examId } = req.body;
+    const existingExam = await Exam.findOneBy({ id: examId });
+
+    if (!existingExam) {
+      return res.status(404).send("there are no exam with this Id");
+    }
+    else {
+
+      const currentTime = new Date();
+      const examEndTime = new Date(existingExam.startTime.getTime() + existingExam.duration * 60 * 1000);
+      if (currentTime > examEndTime) {
+        return res.status(403).send("Enrollment is not allowed becasuse the exam has ended");
+      }
       next();
+
     }
   }
-};
 
-export { validateExamEnrollment, validateUserEnrollment };
+  export { validateExamEnrollment, validateUserEnrollment };
