@@ -1,5 +1,5 @@
-import { sign } from 'crypto'
-import winston from 'winston'
+import { sign } from 'crypto';
+import winston from 'winston';
 
 const baseLogger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',

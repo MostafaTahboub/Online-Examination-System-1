@@ -1,132 +1,135 @@
-import { Request, Response } from "express";
-import moment from "moment";
+import { Request, Response as response } from "express";
 import { Exam } from "../DB/Entities/Exam.js";
 import { Question } from "../DB/Entities/Question.js";
 import { In } from "typeorm";
+import { v4 as uuidv4 } from 'uuid';
+import moment from "moment";
+import { convertStartTime } from "../middleware/validation/examValidation.js";
 
-const createExam = async (req: Request, res: Response) => {
-  const { name, duration, endTime, startTime, questionsIds } = req.body;
-  const newExam = new Exam();
-  newExam.name = name;
 
-  const startTimeMoment = moment(startTime, "h:mm A");
+const createExam = async (req: Request, res: response) => {
 
-  const endTimeMoment = moment(endTime, "h:mm A");
+    const { title, duration, password, startTime, score, questionsIds } = req.body;
+    const newExam = new Exam();
+    newExam.title = title;
+    newExam.startTime = convertStartTime(startTime).toDate();
+    newExam.duration = duration;
+    newExam.score = score;
+    newExam.password = password;
+    newExam.code = generateExamCode(title);
 
-  if (!startTimeMoment.isValid()) {
-    return res.status(400).json({ error: "Invalid start time format" });
-  }
+    const [questions, numberOfQuestions] = await Question.findAndCount({
+        where: {
+            id: In(questionsIds)
+        }
+    });
 
-  if (!endTimeMoment.isValid()) {
-    return res.status(400).json({ error: "Invalid start end format" });
-  }
+    newExam.questions = questions;
+    newExam.numberOfQuestions = numberOfQuestions;
+    await newExam.save()
+    res.status(201).json({ msg: "exam create successfully", exam: newExam });
+}
 
-  const questions = await Question.find({
-    where: {
-      id: In(questionsIds),
-    },
-  });
+const updateExam = (async (req: Request, res: response) => {
+    const examId = Number(req.params.id);
+    const existingExam = await Exam.findOneBy({ id: examId });
 
-  newExam.questions = questions;
+    if (existingExam === null) {
+        return res.status(404).json({ msg: 'Exam not found' });
+    }
 
-  const startTimeDate = startTimeMoment.toDate();
-  const endTimeDate = endTimeMoment.toDate();
+    const examData = req.body;
 
-  newExam.startTime = startTimeDate;
-  newExam.endTime = endTimeDate;
+    existingExam.title = examData.title;
+    existingExam.duration = examData.duration;
+    existingExam.startTime = moment(examData.startTime).toDate();
+    existingExam.score = examData.score;
+    const [questions, num] = await Question.findAndCount({
+        where: {
+            id: In(examData.questionsIds)
+        }
+    });
+    existingExam.numberOfQuestions = num;
+    existingExam.questions = questions;
+});
 
-  const durationMilliseconds =
-    newExam.endTime.getTime() - newExam.startTime.getTime();
-  const durationMinutes = Math.floor(durationMilliseconds / (1000 * 60));
 
-  newExam.duration = durationMinutes;
+const createExamRandom = async (req: Request, res: response) => {
 
-  await newExam.save();
-};
+    const { title, startTime, duration } = req.body;
+    const numberOfRandomQuestions = req.body.numberOfQuestions;
 
-// const existingExam = await Exam.findOne({
-//     where: { name: examName },
-//     relations: ['Question']
-// });
+    const exam = new Exam();
+    exam.title = title;
+    exam.duration = duration;
+    exam.startTime = moment(startTime).toDate();
 
-const updateExam = async (req: Request, res: Response) => {
-  const examName = String(req.query.name);
-  const existingExam = await Exam.findOneBy({ name: examName });
+    const randomQuestions = await Question
+        .createQueryBuilder('question')
+        .orderBy('RAND()')
+        .limit(numberOfRandomQuestions)
+        .getMany();
 
-  if (existingExam === null) {
-    return res.status(404).json({ msg: "Question not found" });
-  }
+    exam.questions = randomQuestions;
 
-  const { name, duration, endTime, startTime, questionsIds } = req.body;
+    const createdExam = await exam.save();
 
-  existingExam.name = name;
-  existingExam.duration = duration;
-  existingExam.startTime = startTime;
-  existingExam.endTime = endTime;
-  existingExam.questions = questionsIds;
-  const startTimeMoment = moment(startTime, "h:mm A");
+    res.status(201).json({ message: 'Exam created with random questions', exam: createdExam });
 
-  const endTimeMoment = moment(endTime, "h:mm A");
+}
 
-  if (!startTimeMoment.isValid()) {
-    return res.status(400).json({ error: "Invalid start time format" });
-  }
 
-  if (!endTimeMoment.isValid()) {
-    return res.status(400).json({ error: "Invalid start end format" });
-  }
+function shuffleArray(array: any) {
 
-  const questions = await Question.find({
-    where: {
-      id: In(questionsIds),
-    },
-  });
+    if (array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+}
 
-  const startTimeDate = startTimeMoment.toDate(); // As JavaScript Date
-  const endTimeDate = endTimeMoment.toDate(); // As JavaScript Date
-  existingExam.startTime = startTimeDate;
-  existingExam.endTime = endTimeDate;
-  existingExam.questions = questions;
-};
 
-const createExamRandom = async (req: Request, res: Response) => {
-  const { name, startTime, endTime, duration } = req.body;
-  const numberOfRandomQuestions = req.body.numberOfQuestions;
 
-  const exam = new Exam();
-  exam.name = name;
-  exam.duration = duration;
+const randomizeQuestions = (exam: Exam) => {
 
-  const randomQuestions = await Question.createQueryBuilder("question")
-    .orderBy("RAND()")
-    .limit(numberOfRandomQuestions)
-    .getMany();
+    if (exam) {
 
-  const startTimeMoment = moment(startTime, "h:mm A");
+        const qustions = exam.questions;
 
-  const endTimeMoment = moment(endTime, "h:mm A");
+        shuffleArray(qustions);
 
-  if (!startTimeMoment.isValid()) {
-    return res.status(400).json({ error: "Invalid start time format" });
-  }
+        const qustionSet = qustions.slice(0, 10);
 
-  if (!endTimeMoment.isValid()) {
-    return res.status(400).json({ error: "Invalid start end format" });
-  }
+        return qustionSet;
+    }
+}
 
-  const startTimeDate = startTimeMoment.toDate();
-  const endTimeDate = endTimeMoment.toDate();
+const fetchQuestionsForExam = async (exam: Exam) => {
+    
+    const questions = exam.questions;
 
-  exam.startTime = startTimeDate;
-  exam.endTime = endTimeDate;
+    return questions;
 
-  exam.questions = randomQuestions;
+}
 
-  const createdExam = await exam.save();
 
-  res
-    .status(201)
-    .json({ message: "Exam created with random questions", exam: createdExam });
-};
+function generateExamCode(title: string) {
 
-export { createExam, updateExam, createExamRandom };
+    const uuid = uuidv4();
+
+    const firstDigits = uuid.substring(0,6);
+
+    const formattedCode = title.replace(/\s+/g, '-').toLowerCase() + '-' + firstDigits;
+
+    return formattedCode;
+}
+
+
+
+
+
+
+
+
+export { createExam, updateExam, createExamRandom, randomizeQuestions, shuffleArray, fetchQuestionsForExam };

@@ -21,13 +21,12 @@ const login = async (email: string, password: string) => {
 
     if (user && passwordMatching) {
       const token = jwt.sign(
-        {
-          userID: user.id,
+        { userId:user.id,
           email: user.email,
           fullName: user.name,
         },
         process.env.SECRET_KEY || "",
-        { expiresIn: "10m" }
+        { expiresIn: "2h" }
       );
       return { token, fullName: user.name };
     } else {
@@ -38,4 +37,4 @@ const login = async (email: string, password: string) => {
   }
 };
 
-export { login };
+export { login , inserUser };

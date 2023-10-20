@@ -17,8 +17,9 @@ import { Enrollment } from "./Enrollment.js";
 import { Exam_answers } from "./Exam_answers.js";
 import { Response } from "./Response.js";
 
-@Entity("user")
+@Entity('user')
 export class User extends BaseEntity {
+
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -54,5 +55,6 @@ export class User extends BaseEntity {
   Answers: Relation<Exam_answers[]>;
 
   @OneToMany(() => Response, (response) => response.user)
-  responses: Relation<Response[]>;
+  responses: Relation<Response[]>
+
 }

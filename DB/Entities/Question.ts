@@ -1,7 +1,6 @@
 import {
   BaseEntity,
   Column,
-  Entity,
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinTable,
@@ -9,19 +8,22 @@ import {
   Relation,
   OneToMany,
   CreateDateColumn,
+  Entity,
+  TableInheritance,
 } from "typeorm";
 import { Exam } from "./Exam.js";
-import { QuestionType } from "./question_Types.js";
 import { Exam_answers } from "./Exam_answers.js";
 import { Subject } from "./Subject.js";
 
+enum QuestionType {
+   "TrueFalse",
+  "MultipleChoice",
+  "FillInTheBlank",
+}
 @Entity()
 export class Question extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
-
-  @Column({ nullable: false })
-  name: string;
 
   @Column()
   text: string;
@@ -29,36 +31,44 @@ export class Question extends BaseEntity {
   @Column()
   weight: number;
 
-  @Column("simple-json", { nullable: true })
-  options: {
-    op_1: string;
-    op_2: string;
-    op_3: string;
-    op_4: string;
-  };
+  @Column()
+  type:"TrueFalse"|"MultipleChoice"|"FillInTheBlank";
 
-  @Column({ nullable: false })
-  answer: string;
+  @Column({ type: 'json', nullable: true })
+  options: string[]; // Array of multiple choice options
 
-  @Column({ nullable: false })
-  order: number;
+  // Fields specific to the True/False question type
+  @Column({ nullable: true })
+  answer: 'True'|'False'; 
 
+  @Column({ nullable: true })
+  correctAnswer: number; // Index of the correct option
+
+  // Fields specific to the Fill in the Blank question type
+  @Column({ type: 'json', nullable: true })
+  blanks: string; // Array of blank placeholders
+
+  @Column({ type: 'json', nullable: true })
+  blankAnswer: string ; // Array of correct answers
+  
+  // @Column({ nullable: false })
+  // order: number;
+  
   @CreateDateColumn({
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP()",
+    type: 'timestamp',
+    default: () => "CURRENT_TIMESTAMP()"
   })
   createdAt: Date;
-
+  
   @ManyToMany(() => Exam, (exam) => exam.questions)
   @JoinTable()
   exams: Relation<Exam[]>;
-
+  
   @ManyToOne(() => Subject, (subject) => subject.question)
-  subject: Relation<Subject>;
-
-  @ManyToOne(() => QuestionType, (questionType) => questionType.question)
-  type: Relation<QuestionType>;
-
+  subject: Relation<Subject>
+  
+  
   @OneToMany(() => Exam_answers, (examAnswer) => examAnswer.question)
   answers: Relation<Exam_answers[]>;
 }
+

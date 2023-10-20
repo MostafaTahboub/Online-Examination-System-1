@@ -5,7 +5,6 @@ import dataSource from "./DB/dataSource.js";
 import createAdminUser from "./controllers/admin.js";
 import home from "./routes/home.js";
 import questionRouter from "./routes/question.router.js";
-import questionTypeRotuer from "./routes/questionType.router.js";
 import subjectRouter from "./routes/subject.js";
 import examRouter from "./routes/Exam.js";
 import Permission from "./routes/Permission.js";
@@ -13,17 +12,22 @@ import role from "./routes/Role.js";
 import response from "./routes/Response.js";
 import enrollmentRouter from "./routes/enrollment.js";
 import baseLogger from "./log.js";
+import cookieParser from 'cookie-parser';
+
 
 const app = express();
 
 app.use(express.json());
-app.use("/Home", home);
+app.use(cookieParser());
+
 
 const PORT = process.env.PORT || 5000;
 
-app.use("/response", response);
+
+app.use("/Home", home);
+app.use("/response", response)
 app.use("/question", questionRouter);
-app.use("/questionType", questionTypeRotuer);
+
 app.use("/subject", subjectRouter);
 app.use("/exam", examRouter);
 app.use("/permission", Permission);

@@ -1,23 +1,18 @@
-import {
-  ManyToOne,
-  Relation,
-  BaseEntity,
-  Entity,
-  CreateDateColumn,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { ManyToOne, Relation, BaseEntity, Entity, CreateDateColumn, PrimaryGeneratedColumn, Column } from "typeorm";
 import { User } from "./User.js";
 import { Exam } from "./Exam.js";
 
 @Entity()
+
 export class Enrollment extends BaseEntity {
-  @PrimaryGeneratedColumn("increment")
+
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
   @ManyToOne(() => User, (user) => user.enrollments)
   user: Relation<User>;
 
-  @ManyToOne(() => Exam, (exam) => exam.enrollments)
+  @ManyToOne(()=> Exam, (exam)=> exam.enrollments)
   exam: Relation<Exam>;
 
   @CreateDateColumn({
@@ -25,4 +20,7 @@ export class Enrollment extends BaseEntity {
     default: () => "CURRENT_TIMESTAMP()",
   })
   createdAt: Date;
+
+  @Column({ type: 'datetime' })
+  endTime: Date;
 }

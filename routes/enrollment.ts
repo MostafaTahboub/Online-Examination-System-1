@@ -1,9 +1,7 @@
 import express from "express";
 import { User } from "../DB/Entities/User.js";
-import {
-  validateExamEnrollment,
-  validateUserEnrollment,
-} from "../middleware/validation/enrollmentValidation.js";
+import {validateExamEnrollment,validateUserEnrollment,} 
+from "../middleware/validation/enrollmentValidation.js";
 import { Exam } from "../DB/Entities/Exam.js";
 import { Enrollment } from "../DB/Entities/Enrollment.js";
 
@@ -34,7 +32,7 @@ router.post(
       });
 
       if (!(previousEnrollment.length === 0)) {
-        return res.status(403).send("you are already enrolled in this exam ");
+        return res.status(403).send("The student already enrolled in this exam ");
       }
 
       const enrollment = new Enrollment();

@@ -6,33 +6,34 @@ import dataSource from "../DB/dataSource.js";
 import { Role } from "../DB/Entities/Role.js";
 import baseLogger from "../log.js";
 const router = express.Router();
-router.post("/new_permission", async (req, res) => {
-  try {
-    if (!req.body.permissionName) {
-      res.status(500).send("Enter the name of the permission!");
-    }
 
-    const x = await Permission.findOneBy({
-      name: req.body.permissionName,
-    });
-
-    if (x === null) {
-      let permission = new Permission();
-      permission.name = req.body.permissionName;
-
-      permission.save();
-      baseLogger.info(`New permission has been added by the admin: ${permission.name}`)
-      res.status(201).send("Permission has been added succefully!");
-    } else {
-      baseLogger.info(`Tying to insert new Permission with the same name of existing one`);
-      res.send("There ara a Permission with this name!");
-    }
-  } catch (error) {
-    baseLogger.error(`Error while creating new permission: ${error}`)
-    res.status(500).send("Something wrong happened!");
-    console.error(error);
-  }
+router.post('/new_permission', async(req, res) => {
+    try {
+        if (!req.body.permissionName) {
+          res.status(500).send("Enter the name of the permission!");
+        }
+    
+        const x = await Permission.findOneBy({
+          name : req.body.permissionName 
+        });
+    
+        if (x === null) {
+          let permission = new Permission();
+          permission.name = req.body.permissionName;
+    
+          permission.save();
+          res.status(201).send("Permission has been added succefully!");
+        } else {
+          res.send("There ara a Permission with this name!");
+        }
+      } catch (error) {
+        res.status(500).send("Something wrong happened!");
+        console.error(error)
+      }
 });
+
+
+
 router.get("/all", authenticate, authorize("admin"), async (req, res) => {
   try {
     const permissions = await dataSource
