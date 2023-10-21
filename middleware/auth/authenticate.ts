@@ -1,6 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../../DB/Entities/User.js';
+import baseLogger from '../../log.js';
 
 const authenticate = async (
     req: express.Request,

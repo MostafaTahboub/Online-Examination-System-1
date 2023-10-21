@@ -1,5 +1,6 @@
 import express from "express";
 import { User } from "../../DB/Entities/User.js";
+import baseLogger from "../../log.js";
 const validateUserLogin = async (
   req: express.Request,
   res: express.Response,
@@ -11,15 +12,17 @@ const validateUserLogin = async (
   // const errorList = values.map(key => !user[key] && `${key} is Required!`).filter(Boolean);
   values.forEach((key) => {
     if (!user[key]) {
-      return errorList.push(`${key} is Required to LogIn!`);
+       errorList.push(`${key} is Required to LogIn!`);
     }
   });
 
   if (errorList.length) {
+    baseLogger.error(`Trying to log in with missed credentials`)
     res.status(400).send(errorList);
   } else {
     const x = User.findOneBy({ email: user.email });
     if (x === null) {
+      baseLogger.error(`Trying to log in with invalid credentials`)
       res.status(500).send("Inter valid credentials");
     } else {
       next();

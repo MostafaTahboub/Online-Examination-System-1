@@ -1,4 +1,3 @@
-import { sign } from 'crypto';
 import winston from 'winston';
 
 const baseLogger = winston.createLogger({

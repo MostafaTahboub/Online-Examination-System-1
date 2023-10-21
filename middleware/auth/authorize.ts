@@ -1,5 +1,6 @@
 import express from "express";
 import { Permission } from "../../DB/Entities/Permissions.js";
+import baseLogger from "../../log.js";
 
 const authorize = (api: string) => {
   return (
@@ -15,6 +16,7 @@ const authorize = (api: string) => {
     ) {
       next();
     } else {
+      baseLogger.info(`Someone tried to access something he don't has access to`);
       res
         .status(403)
         .send("you don't have the permission to access this resource!");

@@ -3,6 +3,7 @@ import { getAllResponses } from '../controllers/response.js';
 import { authenticate } from '../middleware/auth/authenticate.js';
 import { authorize } from '../middleware/auth/authorize.js';
 import { validateResponse } from '../middleware/validation/response.js';
+import baseLogger from '../log.js';
 const router = express.Router();
 
 // router.post("newResponse",authenticate, authorize('POST_response'), validateResponse, (req,res) => {
@@ -26,10 +27,11 @@ router.get(
     };
     getAllResponses(payload)
       .then((data) => {
+        baseLogger.info(`all responses retrived`);
         res.send(data);
       })
       .catch((err) => {
-        console.log(err);
+        baseLogger.error(`somthing went wrong in all responses: ${err}`);
         res.status(500).send("somthing went wrong in all responses");
       });
   }
