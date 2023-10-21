@@ -1,7 +1,7 @@
 import { User } from "../DB/Entities/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Role } from "../DB/Entities/Role.js";
+
 
 const inserUser = async (payload: User) => {
   let user = new User();

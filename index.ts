@@ -14,20 +14,16 @@ import enrollmentRouter from "./routes/enrollment.js";
 import baseLogger from "./log.js";
 import cookieParser from 'cookie-parser';
 
-
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
 
-
 const PORT = process.env.PORT || 5000;
-
 
 app.use("/Home", home);
 app.use("/response", response)
 app.use("/question", questionRouter);
-
 app.use("/subject", subjectRouter);
 app.use("/exam", examRouter);
 app.use("/permission", Permission);
@@ -35,19 +31,23 @@ app.use("/role", role);
 app.use("/enrollment", enrollmentRouter);
 
 app.get("/", (req, res) => {
+  baseLogger.info("app is running succefully");
   res.status(200).send("app is running succefully");
 });
 
 app.listen(PORT, async () => {
   console.log(`App is lestining to PORT  : ` + PORT);
+  baseLogger.info(`App is lestining to PORT : ${PORT}`);
 
   dataSource
     .initialize()
     .then(() => {
       createAdminUser();
+      baseLogger.info("connected to database :)");
       console.log("connected to database :)");
     })
     .catch((err) => {
+      baseLogger.error(`failed to connect connect to db !! ${err}`);
       console.log("failed to connect to db !! " + err);
     });
 });

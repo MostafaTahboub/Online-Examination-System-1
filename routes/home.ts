@@ -6,6 +6,7 @@ import { authenticate } from "../middleware/auth/authenticate.js";
 import { Role } from "../DB/Entities/Role.js";
 import { validateUserLogin } from "../middleware/validation/login.js";
 import baseLogger from "../log.js";
+import sendEmail from "../controllers/SES.js";
 const router = express.Router();
 
 router.post("/register", validateUser, async (req, res) => {
@@ -25,6 +26,7 @@ router.post("/register", validateUser, async (req, res) => {
     });
     user.save();
     baseLogger.info(`new ${Role.name} has been registered`);
+    sendEmail(user.email, "Online-Examination-System", `Hello user ${user.id} you just join our family`);
     res.status(201).send("user has been added successfully");
   } catch (error) {
     baseLogger.error(`Error thrown while register: ${error}`);
