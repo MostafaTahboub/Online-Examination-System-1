@@ -13,6 +13,7 @@ import response from "./routes/Response.js";
 import enrollmentRouter from "./routes/enrollment.js";
 import baseLogger from "./log.js";
 import cookieParser from 'cookie-parser';
+import analytics from './routes/Analytics.js'
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use("/exam", examRouter);
 app.use("/permission", Permission);
 app.use("/role", role);
 app.use("/enrollment", enrollmentRouter);
+app.use('/analytics', analytics)
 
 app.get("/", (req, res) => {
   baseLogger.info("app is running succefully");

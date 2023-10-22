@@ -19,7 +19,7 @@ const dataSource = new DataSource({
   entities: [User, Role, Permission, Question, Exam, Subject, Enrollment, Exam_answers, Response],
   migrations:['./**/migration/*.ts'],
   synchronize: true,
-  logging: true,
+  logging: false,
 });
 
 export default dataSource;

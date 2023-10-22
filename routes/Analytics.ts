@@ -6,7 +6,7 @@ import { Exam } from "../DB/Entities/Exam.js";
 import { authorize } from "../middleware/auth/authorize.js";
 import { Response } from "../DB/Entities/Response.js";
 import baseLogger from "../log.js";
-import { EqualOperator } from "typeorm/browser";
+import { EqualOperator } from "typeorm";
 const router = express.Router();
 
 router.get("/By_user", authenticate, async (req, res) => {
@@ -39,17 +39,18 @@ router.get("/By_user", authenticate, async (req, res) => {
 
 router.get(
   "/By_exam",
-  authenticate,
-  authorize("GET_EXAM_REVIEW"),
   async (req, res) => {
     try {
         const token = req.cookies["token"];
         const decode = jwt.decode(token, { json: true });
-        if(decode !== null)
-      {const exam_id = Number(req.body.exam_id);
+        if(decode === null)
+        return res.status(500).send('Token not valid');
+        else
+      {
+        const exam_id = Number(req.body.examID);
 
       if (!exam_id) {
-        res.status(400).send("Enter the exam id");
+       return res.status(400).send("Enter the exam id");
       }
       else{
           const exam = await Exam.findOneBy({ id: exam_id });
@@ -57,7 +58,7 @@ router.get(
           if (exam !== null) {
             let [responses, total] = await Response.findAndCount({
                 //need to fix
-              where : { exam:new EqualOperator(exam)},
+              where : { exam: new EqualOperator(exam)},
             });
             let avg: number = 0;
     
@@ -76,7 +77,7 @@ router.get(
             }
           } else {
             baseLogger.info(`Ther are no exam with id: ${exam_id}`);
-            res.status(400).send("There are no exam with this id");
+            return res.status(400).send("There are no exam with this id");
           }
         } 
     }
