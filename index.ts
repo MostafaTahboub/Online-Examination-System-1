@@ -12,32 +12,30 @@ import roleRouter from "./routes/role.js";
 import responseRouter from "./routes/response.js";
 import enrollmentRouter from "./routes/enrollment.js";
 import baseLogger from "./log.js";
-import cookieParser from 'cookie-parser';
-import analytics from './routes/Analytics.js'
+import cookieParser from "cookie-parser";
+import analytics from "./routes/Analytics.js";
 
-const app = express();
+export const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
 
 const PORT = process.env.PORT || 5000;
 
-app.use("/Home", home);
-app.use("/response", response)
+app.use("/home", homeRouter);
 app.use("/question", questionRouter);
 app.use("/subject", subjectRouter);
 app.use("/exam", examRouter);
 app.use("/permission", permissionRouter);
 app.use("/role", roleRouter);
 app.use("/enrollment", enrollmentRouter);
-app.use('/analytics', analyticsRouter)
-
+app.use('/response', responseRouter);
+app.use('/analytics', analytics)
 
 app.get("/", (req, res) => {
   baseLogger.info("app is running succefully");
   res.status(200).send("app is running succefully");
 });
-
 
 app.listen(PORT, async () => {
   console.log(`App is lestining to PORT  : ` + PORT);
@@ -45,7 +43,7 @@ app.listen(PORT, async () => {
 
   dataSource
     .initialize()
-    .then(() => {    
+    .then(() => {
       createAdminUser();
       baseLogger.info("connected to database :)");
       console.log("connected to database :)");
