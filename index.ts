@@ -13,7 +13,8 @@ import response from "./routes/Response.js";
 import enrollmentRouter from "./routes/enrollment.js";
 import baseLogger from "./log.js";
 import cookieParser from 'cookie-parser';
-import analytics from './routes/Analytics.js'
+import analytics from './routes/Analytics.js';
+import reset from './routes/resetPwd.js'
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 
 const PORT = process.env.PORT || 5000;
 
+app.use('/', reset);
 app.use("/Home", home);
 app.use("/response", response)
 app.use("/question", questionRouter);
@@ -36,6 +38,7 @@ app.get("/", (req, res) => {
   baseLogger.info("app is running succefully");
   res.status(200).send("app is running succefully");
 });
+
 
 app.listen(PORT, async () => {
   console.log(`App is lestining to PORT  : ` + PORT);
