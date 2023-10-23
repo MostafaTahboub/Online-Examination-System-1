@@ -28,10 +28,10 @@ jobs:
         username: mostafatahboub
         password: ${{secrets.GITHUB_TOKEN}}
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghcr.io/mostafatahboub/onlineExamination:${{ steps.image_version.outputs.gitsha }}
+      run: docker build . --file Dockerfile --tag ghcr.io/mostafatahboub/online-examination-system-1:${{ steps.image_version.outputs.gitsha }}
 
     - name: Publish docker image
-      run: docker push ghcr.io/mostafatahboub/onlineExamination:${{ steps.image_version.outputs.gitsha }}
+      run: docker push ghcr.io/mostafatahboub/online-examination-system-1:${{ steps.image_version.outputs.gitsha }}
 
     - name: configure docker host
       uses: khaledez/configure-docker-host@v1
