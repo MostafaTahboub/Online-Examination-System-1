@@ -29,9 +29,11 @@ export class Role extends BaseEntity {
   @JoinTable()
   permissions: Relation<Permission[]>;
 
-  @CreateDateColumn({
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP()",
-  })
-  createdAt: Date;
+  // @CreateDateColumn({
+  //   type: "timestamp",
+  //   default: () => "CURRENT_TIMESTAMP()",
+  // })
+  // createdAt: Date;
+  @CreateDateColumn()
+createdAt: Date;
 }

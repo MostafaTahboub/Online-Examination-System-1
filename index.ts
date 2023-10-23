@@ -9,7 +9,7 @@ import subjectRouter from "./routes/subject.js";
 import examRouter from "./routes/exam.js";
 import permissionRouter from "./routes/permission.js";
 import roleRouter from "./routes/role.js";
-import responseRouter from "./routes/Response.js";
+import responseRouter from "./routes/response.js";
 import enrollmentRouter from "./routes/enrollment.js";
 import baseLogger from "./log.js";
 import cookieParser from 'cookie-parser';

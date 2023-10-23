@@ -29,11 +29,12 @@ totalScore:number
 @Column('simple-array', { nullable: true })
 shuffledQuestionOrder: number[];
 
-@CreateDateColumn({
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP()",
-  })
-  createdAt: Date;
-
+// @CreateDateColumn({
+//     type: "timestamp",
+//     default: () => "CURRENT_TIMESTAMP()",
+//   })
+//   createdAt: Date;
+@CreateDateColumn()
+createdAt: Date;
 
 }
