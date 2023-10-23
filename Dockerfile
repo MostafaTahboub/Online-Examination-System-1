@@ -12,7 +12,7 @@ RUN npm ci
 # Now copy the project files
 ADD . . 
 
-RUN npm run build
+# RUN npm run build
 
 HEALTHCHECK --interval=10s --timeout=3s \
   CMD curl -f http://localhost/ || exit 1
