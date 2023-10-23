@@ -14,6 +14,7 @@ import enrollmentRouter from "./routes/enrollment.js";
 import baseLogger from "./log.js";
 import cookieParser from "cookie-parser";
 import analytics from "./routes/Analytics.js";
+import reset from './routes/resetPwd.js';
 
 export const app = express();
 
@@ -30,7 +31,8 @@ app.use("/permission", permissionRouter);
 app.use("/role", roleRouter);
 app.use("/enrollment", enrollmentRouter);
 app.use('/response', responseRouter);
-app.use('/analytics', analytics)
+app.use('/analytics', analytics);
+app.use('/', reset);
 
 app.get("/", (req, res) => {
   baseLogger.info("app is running succefully");
