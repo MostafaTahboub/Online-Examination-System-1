@@ -41,6 +41,7 @@ app.get("/", (req, res) => {
 app.listen(PORT, async () => {
   console.log(`App is lestining to PORT  : ` + PORT);
   baseLogger.info(`App is lestining to PORT : ${PORT}`);
+
   dataSource
     .initialize()
     .then(() => {    
