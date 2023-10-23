@@ -22,8 +22,7 @@ router.get("/By_user", authenticate, async (req, res) => {
           for (let i = 0; i < responses.length; i++) {
             sum += responses[i].totalScore;
           }
-          res
-            .status(200)
+          res.status(200)
             .send(
               `Hi ${user.name} your exams rate is: ${sum / responses.length}`
             );
@@ -33,7 +32,7 @@ router.get("/By_user", authenticate, async (req, res) => {
     }
   } catch (error) {
     baseLogger.error(`Error while calculate the user exam rate: ${error}`);
-    res.status(400).send("somthing went wrong");
+    res.status(500).send("somthing went wrong");
   }
 });
 
@@ -73,16 +72,18 @@ router.get(
                 .send(`The average score in this exam is :${avg}`);
             } else {
                 baseLogger.info(`No Responses found for this exam: ${exam_id}`);
-              return res.status(501).send("No Responses Found");
+              return res.status(404).send("No Responses Found");
             }
           } else {
             baseLogger.info(`Ther are no exam with id: ${exam_id}`);
-            return res.status(400).send("There are no exam with this id");
+            return res.status(404).send("There are no exam with this id");
           }
         } 
     }
-    } catch (error) {baseLogger.error(`Error while calculating the exam rate: ${error}`)}
-
+    } catch (error) {
+      
+      baseLogger.error(`Error while calculating the exam rate: ${error}`)}
+       res.status(500).send("something went wrong ");             
       }
 );
 

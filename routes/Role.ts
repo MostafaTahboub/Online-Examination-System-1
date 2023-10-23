@@ -53,7 +53,7 @@ router.post("/newRole", authenticate, authorize("admin"), async (req, res) => {
       res.status(201).send("Role has been added succefully!");
     } else {
       baseLogger.info(`The admin trying to add new role with name already exist`);
-      res.send("There are a Role with this name!");
+      res.status(409).send("There are a Role with this name!");
     }
   } catch (error) {
     baseLogger.error(`Error occured while creating new Role: ${error}`);
@@ -68,35 +68,39 @@ router.get("/all", authenticate, authorize("admin"), async (req, res) => {
       .select("roleName")
       .from(Role, "roleName")
       .getMany();
-      baseLogger.info(`The admin view the existed Roles`);
+    baseLogger.info(`The admin view the existed Roles`);
     return res.status(200).json({ roles });
   } catch (error) {
     baseLogger.error(`Error while seeing the Roles by admin: ${error}`);
-    res.status(404).send("somthing wrong happend");
+    res.status(500).send("somthing wrong happend");
   }
 });
 
 ///the modification done on the Root
-router.post(
-  "/assign_role_to_user",
-  authenticate,
-  authorize("admin"),
-  async(req, res) => {
+router.post("/assign_role_to_user", authenticate, authorize("admin"), async (req, res) => {
+  try {
+
     let x: Role | null;
     const roleName = req.body.roleName;
     const userName = req.body.username;
     let role = await Role.findOneBy({ roleName: roleName }).then((rle) => (x = rle));
-    let user =  await User.findOneBy({ username: userName })
-      if (role === null || user === null) {
-        baseLogger.error(`Trying to add role for user one of them or both not exist`);
-        res.status(404).send("Can't find User or the Role");
-      } else {
-        user.role = role;
-        user.save();
-      }
-    
+    let user = await User.findOneBy({ username: userName })
+
+    if (role === null || user === null) {
+      baseLogger.error(`Trying to add role for user one of them or both not exist`);
+      res.status(404).send("Can't find User or the Role");
+    } else {
+      user.role = role;
+      user.save();
+    }
+
     baseLogger.info(`The Role ${role?.roleName} for the user ${user?.name}`)
     res.status(200).send("Role has been assigned to the user");
   }
-);
+  catch (error) {
+    console.error("error while assigning role to the user :" + error);
+    res.status(500).send("something went wrong");
+  }
+
+});
 export default router;
