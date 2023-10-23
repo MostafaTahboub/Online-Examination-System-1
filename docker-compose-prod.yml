@@ -18,7 +18,7 @@ services:
     restart: always
 
   app:
-    image: ghcr.io/mostafatahboub/OnlineExamination:$GIT_VERSION
+    image: ghcr.io/mostafatahboub/online-examination-system-1:$GIT_VERSION
     restart: always
     environment:
       - PORT=80
