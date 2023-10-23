@@ -17,8 +17,8 @@ const validateUserEnrollment = async (
   }
   else {
 
-    if (existingUser.role.roleName != "user") {
-      baseLogger.error(`Trying to enroll somone with no user role to exam`)
+    if (existingUser.role.roleName != "student") {
+      baseLogger.error(`Trying to enroll somone with no student role to exam`)
       return res.status(403).send("this user is not a student");
 
     }

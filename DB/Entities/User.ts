@@ -23,7 +23,7 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column()
+  @Column({default:''})
   username: string;
 
   @Column({ nullable: false, length: 255 })

@@ -54,11 +54,14 @@ export class Question extends BaseEntity {
   // @Column({ nullable: false })
   // order: number;
   
-  @CreateDateColumn({
-    type: 'timestamp',
-    default: () => "CURRENT_TIMESTAMP()"
-  })
-  createdAt: Date;
+  // @CreateDateColumn({
+  //   type: 'timestamp',
+  //   default: () => "CURRENT_TIMESTAMP()"
+  // })
+  // createdAt: Date;
+
+  @CreateDateColumn()
+createdAt: Date;
   
   @ManyToMany(() => Exam, (exam) => exam.questions)
   @JoinTable()

@@ -15,11 +15,14 @@ export class Enrollment extends BaseEntity {
   @ManyToOne(()=> Exam, (exam)=> exam.enrollments)
   exam: Relation<Exam>;
 
-  @CreateDateColumn({
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP()",
-  })
-  createdAt: Date;
+  // @CreateDateColumn({
+  //   type: "timestamp",
+  //   default: () => "CURRENT_TIMESTAMP()",
+  // })
+  // createdAt: Date;
+
+  @CreateDateColumn()
+createdAt: Date;
 
   @Column({ type: 'datetime' })
   endTime: Date;

@@ -5,12 +5,14 @@ import baseLogger from "../log.js";
 var router = express.Router();
 
 router.post("/new", async (req, res) => {
+
   try {
     let newSubject = new Subject();
     newSubject.name = req.body.name;
     await newSubject.save();
     baseLogger.info(`new subject has been added succefully`);
-    res.status(201).send("new subject create succeffuly ");
+    res.status(201).send("new subject created succeffuly ");
+
   } catch (error) {
     res.status(500).send("something went wrong ");
     baseLogger.error("error occured while creating subject : " + error);

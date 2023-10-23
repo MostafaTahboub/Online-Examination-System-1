@@ -16,19 +16,17 @@ const router = express.Router();
 //     })
 // });
 
-router.get(
-  "/all",
-  authenticate,
-  authorize("GET_Respnses"),
-  (req, res, next) => {
-    const payload = {
+router.get(  "/all",authenticate,authorize("GET_Respnses"),(req, res, next) => {
+    
+  const payload = {
       page: req.query.page?.toString() || "1",
       pageSize: req.query.pageSize?.toString() || "5",
     };
+  
     getAllResponses(payload)
       .then((data) => {
         baseLogger.info(`all responses retrived`);
-        res.send(data);
+        res.status(200).send(data);
       })
       .catch((err) => {
         baseLogger.error(`somthing went wrong in all responses: ${err}`);

@@ -21,10 +21,10 @@ router.post('/new_permission', async(req, res) => {
           let permission = new Permission();
           permission.name = req.body.permissionName;
     
-          permission.save();
+          await permission.save();
           res.status(201).send("Permission has been added succefully!");
         } else {
-          res.send("There ara a Permission with this name!");
+          res.status(409).send("There ara a Permission with this name!");
         }
       } catch (error) {
         res.status(500).send("Something wrong happened!");
@@ -45,7 +45,7 @@ router.get("/all", authenticate, authorize("admin"), async (req, res) => {
     return res.status(200).json({ permissions });
   } catch (error) {
     baseLogger.error(`Error while retriving the permissions names by the admin: ${error}`)
-    res.status(404).send("somthing wrong happend");
+    res.status(500).send("somthing wrong happend");
   }
 });
 
@@ -75,7 +75,10 @@ router.put(
         baseLogger.info(`Assigning permission: ${permission.name} to role: ${role.roleName} was successful`);
         res.status(200).send("permission assigned to the role");
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("something went wrong ");
+    }
   }
 );
 

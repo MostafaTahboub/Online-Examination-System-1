@@ -1,8 +1,4 @@
-
 import { Response } from "../DB/Entities/Response.js";
-
-
-
 
 const getAllResponses = async (payload: GetAll) => {
   const page = parseInt(payload.page);
@@ -19,10 +15,5 @@ const getAllResponses = async (payload: GetAll) => {
         Responses
     }
 }
-
-
-
-
-
 
 export { getAllResponses}

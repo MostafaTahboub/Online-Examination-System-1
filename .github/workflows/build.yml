@@ -2,9 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ " " ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ " " ]
+    branches: [ "main" ]
 
 jobs:
 
@@ -28,15 +28,15 @@ jobs:
         username: mostafatahboub
         password: ${{secrets.GITHUB_TOKEN}}
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghcr.io/mostafatahboub/express-docker:${{ steps.image_version.outputs.gitsha }}
+      run: docker build . --file Dockerfile --tag ghcr.io/mostafatahboub/online-examination-system-1:${{ steps.image_version.outputs.gitsha }}
 
     - name: Publish docker image
-      run: docker push ghcr.io/mostafatahboub/express-docker:${{ steps.image_version.outputs.gitsha }}
+      run: docker push ghcr.io/mostafatahboub/online-examination-system-1:${{ steps.image_version.outputs.gitsha }}
 
     - name: configure docker host
       uses: khaledez/configure-docker-host@v1
       with:
-        host: 13.38.216.47
+        host: 18.212.76.179
         user: github
         ssh-private-key: ${{secrets.DEPLOYMENT_KEY}}
 

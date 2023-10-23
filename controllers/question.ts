@@ -58,7 +58,7 @@ const getAllQuestions = async (req: Request, res: Response) => {
       },
     });
 
-    res.send({
+    res.status(200).send({
       page,
       pageSize: items.length,
       total,

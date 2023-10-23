@@ -30,7 +30,7 @@ router.post("/register", validateUser, async (req, res) => {
     res.status(201).send("user has been added successfully");
   } catch (error) {
     baseLogger.error(`Error thrown while register: ${error}`);
-    res.status(400).send(error);
+    res.status(500).send("something went wrong ");
   }
 });
 
@@ -50,11 +50,11 @@ router.post("/login", validateUserLogin, async (req, res) => {
         maxAge: 30 * 60 * 1000,
       });
       baseLogger.info(`New login from ( ${data.fullName} ) user`)
-      res.send();
+      res.status(200).send(200);
     })
     .catch((err) => {
       baseLogger.info("Trying to login with invalid credintials");
-      res.status(401).send(err);
+      res.status(400).send("pleas try again with valid credintials");
     });
 });
 
