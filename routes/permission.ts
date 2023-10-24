@@ -5,6 +5,7 @@ import { Permission } from "../DB/Entities/Permissions.js";
 import dataSource from "../DB/dataSource.js";
 import { Role } from "../DB/Entities/Role.js";
 import baseLogger from "../log.js";
+
 const router = express.Router();
 
 router.post('/new_permission', async(req, res) => {

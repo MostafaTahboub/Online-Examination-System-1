@@ -3,9 +3,10 @@ version: '3'
 services:
   mysql:
     image: mysql
+    command: --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
-      - MYSQL_DATABASE=$DB_NAME
+      - MYSQL_DATABASE=online2
     
     volumes:
       - db-data:/var/lib/mysql
@@ -25,7 +26,7 @@ services:
       - DB_HOST=mysql
       - DB_USER=root
       - DB_PASSWORD=$DB_PASSWORD
-      - DB_NAME=$DB_NAME
+      - DB_NAME=online2
     ports:
       - "80:80"
     depends_on:

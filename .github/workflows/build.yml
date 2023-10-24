@@ -36,7 +36,7 @@ jobs:
     - name: configure docker host
       uses: khaledez/configure-docker-host@v1
       with:
-        host: 18.212.76.179
+        host: online-lb-1898523670.us-east-1.elb.amazonaws.com
         user: github
         ssh-private-key: ${{secrets.DEPLOYMENT_KEY}}
 

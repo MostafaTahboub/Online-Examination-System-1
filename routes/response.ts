@@ -35,6 +35,5 @@ router.get(  "/all",authenticate,authorize("GET_Respnses"),(req, res, next) => {
   }
 );
 
-router.delete;
 
 export default router;

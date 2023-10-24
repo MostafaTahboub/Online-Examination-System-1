@@ -13,7 +13,7 @@ import responseRouter from "./routes/response.js";
 import enrollmentRouter from "./routes/enrollment.js";
 import baseLogger from "./log.js";
 import cookieParser from "cookie-parser";
-import analytics from "./routes/Analytics.js";
+import analytics from "./routes/analytics.js";
 import reset from './routes/resetPwd.js';
 
 export const app = express();
@@ -40,8 +40,10 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, async () => {
-  console.log(`App is lestining to PORT ..s : ` + PORT);
+  console.log(`App is lestining to PORT.. : ` + PORT);
   baseLogger.info(`App is lestining to PORT : ${PORT}`);
+  console.log(process.env.DB_ENDPOINT);
+  console.log(process.env.DB_PASSWORD);
 
   dataSource
     .initialize()
