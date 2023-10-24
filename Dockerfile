@@ -9,10 +9,10 @@ COPY package.json package-lock.json ./
 # Execute a command while building the container
 RUN npm ci
 
+RUN npm run build
 # Now copy the project files
 ADD . . 
 
-RUN npm run build
 
 HEALTHCHECK --interval=10s --timeout=3s \
   CMD curl -f http://localhost/ || exit 1
