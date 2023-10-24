@@ -20,7 +20,7 @@ const authenticate = async (
         res.locals.user = user;
         next();
     } else {
-        res.status(401).send("May I Help You To LonIn");
+        res.status(401).send("May I Help You To Signin");
     }
 }
 

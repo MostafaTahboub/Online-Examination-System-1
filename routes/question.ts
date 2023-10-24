@@ -24,13 +24,32 @@ router.post('/new', authenticate,  validateCreateQuestion, async (req, res) => {
         question.subject = subject;
     }
     if (question.type === 'TrueFalse') {
-        question.answer = questionData.answer;
+        if(questionData.answer && questionData.answer === ("T"||"F"))
+        {question.answer = questionData.answer;}
+        else {
+            return res.status(400).send("invalid question answer")
+        }
     } else if (question.type === 'MultipleChoice') {
-        question.options = questionData.options;
-        question.correctAnswer = questionData.correctAnswer;
+        if(questionData.options)
+        {question.options = questionData.options;}
+        else {
+            return res.status(400).send("Invalid options for multiple choice type questions");
+        }
+        if(questionData.correctAnswer && questionData.correctAnswer === ("A"||"B"||"C"||"D"))
+        {question.correctAnswer = questionData.correctAnswer;}
+        else {
+            return res.status(400).send("invalid MCQ answer")
+        }
     } else if (question.type === 'FillInTheBlank') {
-        question.blanks = questionData.blanks;
-        question.blankAnswer = questionData.blankAnswer;
+        if(questionData.blanks)
+        {question.blanks = questionData.blanks;}
+        else {return res.status(400).send("Blanks is required");}
+        if(questionData.blankAnswer)
+        {question.blankAnswer = questionData.blankAnswer;}
+        else {return res.status(400).send("BlankAnswer is required");}
+    }
+    else{
+        return res.status(400).send("invalid question type")
     }
 
     try {
@@ -43,19 +62,21 @@ router.post('/new', authenticate,  validateCreateQuestion, async (req, res) => {
     }
 });
 
-router.put('/edit', authenticate, async (req, res) => {
+router.put('/edit', authenticate, validateCreateQuestion, async (req, res) => {
 
     try {
         await updateQuestion(req, res);
         baseLogger.info(`Qusetion with id: ${req.params.id} has been updated`);
-        return res.status(201).send("question updated successfully");
+        return res.status(200).send("question updated successfully");
     } catch (error) {
+        res.status(500).send(error)
         baseLogger.error("error while updating question" + error)
     }
 });
 
-router.get('/get/:id', async (req, res) => {
-    const id = Number(req.params.id);
+router.get('/get/:id',authenticate, async (req, res) => {
+    if(req.body.id)
+    {const id = Number(req.params.id);
     const existingQuestion = await Question.findOneBy({id:id});
     
     if (!existingQuestion) {
@@ -66,10 +87,14 @@ router.get('/get/:id', async (req, res) => {
     else {
         baseLogger.info(`The qustion with id: ${existingQuestion.id} has been retrived`);
         res.status(200).json({ question: existingQuestion });
+    }}
+    else {
+        return res.status(400).send("Enter the question id");
     }
 });
 
 router.get('/all', (req, res) => {
+    
     getAllQuestions(req, res);
 });
 

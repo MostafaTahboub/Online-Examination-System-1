@@ -9,7 +9,7 @@ import baseLogger from "../log.js";
 import sendEmail from "../controllers/SES.js";
 const router = express.Router();
 
-router.post("/register", validateUser, async (req, res) => {
+router.post("/signup", validateUser, async (req, res) => {
   try {
     let user = new User();
     user.username = req.body.userName;
@@ -34,7 +34,7 @@ router.post("/register", validateUser, async (req, res) => {
   }
 });
 
-router.post("/login", validateUserLogin, async (req, res) => {
+router.post("/signin", validateUserLogin, async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
@@ -58,12 +58,12 @@ router.post("/login", validateUserLogin, async (req, res) => {
     });
 });
 
-router.get("/logout", authenticate, (req, res) => {
+router.post("/signout", authenticate, (req, res) => {
   baseLogger.info(`${req.cookies['fullName']} has just logged out`)
   res.cookie("fullName", "", { maxAge: -1 });
   res.cookie("logintTime", "", { maxAge: -1 });
   res.cookie("token", "", { maxAge: -1 });
-  res.send("See You Soon My User");
+  res.status(200).send("See You Soon My User");
   
 });
 

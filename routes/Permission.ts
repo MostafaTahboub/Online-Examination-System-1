@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/new_permission', async(req, res) => {
     try {
         if (!req.body.permissionName) {
-          res.status(500).send("Enter the name of the permission!");
+          res.status(400).send("Enter the name of the permission!");
         }
     
         const x = await Permission.findOneBy({
@@ -56,11 +56,11 @@ router.put(
   async (req, res) => {
     try {
       if (!req.body.roleName) {
-        res.send("Enter the role name");
+        res.status(400).send("Enter the role name");
       }
 
       if (!req.body.permissionName) {
-        res.send("Enter the permission name");
+        res.status(400).send("Enter the permission name");
       }
       const role = await Role.findOneBy({ roleName: req.body.roleName });
       const permission = await Permission.findOneBy({

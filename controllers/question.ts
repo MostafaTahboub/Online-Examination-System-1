@@ -33,6 +33,9 @@ const updateQuestion = (async (req: Request, res: Response) => {
         question.blanks = questionData.blanks;
         question.blankAnswer = questionData.blankAnswer;
     }
+    else {
+     return res.status(400).send("Invalid type");
+    }
 
     await question.save()
         .then(() => {

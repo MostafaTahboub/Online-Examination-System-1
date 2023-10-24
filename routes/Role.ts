@@ -14,11 +14,11 @@ router.post("/newRole", authenticate, authorize("admin"), async (req, res) => {
     const permissions = req.body.permissions;
 
     if (!req.body.roleName) {
-      res.status(500).send("Enter the name of the Role!");
+      res.status(400).send("Enter the name of the Role!");
     }
 
     if (!permissions) {
-      res.status(500).send("Enter the permissions of this role");
+      res.status(400).send("Enter the permissions of this role");
     }
 
     const x = await Role.findOne({

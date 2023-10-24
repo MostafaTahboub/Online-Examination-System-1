@@ -9,6 +9,10 @@ const validateUserEnrollment = async (
   next: NextFunction
 ) => {
   const { userId } = req.body;
+  if(!userId)
+    {
+      return res.status(400).send("Enter the userId")
+    }
   const existingUser = await User.findOneBy({ id: userId });
 
   if (!existingUser) {
@@ -31,6 +35,10 @@ const validateUserEnrollment = async (
   const validateExamEnrollment = async (req: Request, res: Response, next: NextFunction) => {
 
     const { examId } = req.body;
+    if(!examId)
+    {
+      return res.status(400).send("Enter the examId")
+    }
     const existingExam = await Exam.findOneBy({ id: examId });
 
     if (!existingExam) {

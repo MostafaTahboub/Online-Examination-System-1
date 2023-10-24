@@ -5,11 +5,13 @@ import { validateExamEnrollment, validateUserEnrollment, }
 import { Exam } from "../DB/Entities/Exam.js";
 import { Enrollment } from "../DB/Entities/Enrollment.js";
 import baseLogger from "../log.js";
+import { authenticate } from "../middleware/auth/authenticate.js";
 
 var router = express.Router();
 
-router.post("/enroll", validateUserEnrollment, validateExamEnrollment, async (req, res) => {
+router.post("/enroll", validateUserEnrollment, validateExamEnrollment, authenticate, async (req, res) => {
   try {
+    
     const userId = req.body.userId;
     const examId = req.body.examId;
 

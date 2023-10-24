@@ -30,7 +30,7 @@ const validateUser = async (
   });
 
   if (test) {
-    return res.status(500).send("choose another userName :)");
+    return res.status(409).send("choose another userName :)");
   }
 
   if (user.type !== "instructor" && user.type !== "student") {

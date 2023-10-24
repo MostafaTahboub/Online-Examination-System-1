@@ -4,11 +4,20 @@ import baseLogger from "../../log.js";
 
 async function validateCreateQuestion(req:Request,res:Response,next:NextFunction){
 
-const {text,answer,order}=req.body;
-if (!text)
+  const values = ["text", "answer", "type", "weight"];
+  const question = req.body;
+  const errorList = [];
+  // const errorList = values.map(key => !question[key] && `${key} is Required!`).filter(Boolean);
+  values.forEach((key) => {
+    if (!question[key]) {
+      return errorList.push(`${key} is Required to create User!`);
+    }
+  });
+
+if (errorList.length > 0)
 {
   baseLogger.error(`Trying to log in with invalid credentials`)
-    return res.status(400).json({err:"text is required"});
+    return res.status(400).send("All fiels are required")
 }
 
 
