@@ -29,7 +29,7 @@ services:
       - DB_HOST=db
       - DB_USER=root
       - DB_PASSWORD=$DB_PASSWORD
-      - DB_NAME=$DB_NAME
+      - DB_NAME=online2
     ports:
       - "3000:80"
     depends_on:
