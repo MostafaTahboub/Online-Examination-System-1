@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import express from "express";
+import express, { urlencoded } from "express";
 import "./config.js";
 import dataSource from "./DB/dataSource.js";
 import createAdminUser from "./controllers/admin.js";
@@ -20,6 +20,8 @@ export const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
+app.set('view engine', 'ejs')
 
 const PORT = process.env.PORT || 5000;
 
@@ -46,9 +48,10 @@ app.listen(PORT, async () => {
   dataSource
     .initialize()
     .then(() => {
-      createAdminUser();
+      // createAdminUser();
       baseLogger.info("connected to database :)");
       console.log("connected to database :)");
+
     })
     .catch((err) => {
       baseLogger.error(`failed to connect connect to db !! ${err}`);

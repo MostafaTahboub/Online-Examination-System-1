@@ -14,6 +14,7 @@ const inserUser = async (payload: User) => {
 const login = async (email: string, password: string) => {
   try {
     const user = await User.findOneBy({ email });
+    
     const passwordMatching = await bcrypt.compare(
       password,
       user?.password || ""
