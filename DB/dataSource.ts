@@ -2,7 +2,7 @@ import { DataSource } from "typeorm";
 import { User } from "./Entities/User.js";
 import { Permission } from "./Entities/Permissions.js";
 import { Role } from "./Entities/Role.js";
-import {  Question } from "./Entities/Question.js";
+import { Question } from "./Entities/Question.js";
 import { Exam } from "./Entities/Exam.js";
 import { Subject } from "./Entities/Subject.js";
 import { Enrollment } from "./Entities/Enrollment.js";
@@ -16,8 +16,18 @@ const dataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [User, Role, Permission, Question, Exam, Subject, Enrollment, Exam_answers, Response],
-  migrations:['./**/migration/*.ts'],
+  entities: [
+    User,
+    Role,
+    Permission,
+    Question,
+    Exam,
+    Subject,
+    Enrollment,
+    Exam_answers,
+    Response,
+  ],
+  migrations: ["/m*igration*/"],
   synchronize: true,
   logging: false,
 });
