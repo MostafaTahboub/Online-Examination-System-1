@@ -9,7 +9,7 @@ import baseLogger from "../log.js";
 import { EqualOperator } from "typeorm";
 const router = express.Router();
 
-router.get("/By_user", authenticate, async (req, res) => {
+router.get("/by_user", authenticate, async (req, res) => {
   try {
     const token = req.cookies["token"];
     const decode = jwt.decode(token, { json: true });
@@ -43,7 +43,7 @@ router.get(
         const token = req.cookies["token"];
         const decode = jwt.decode(token, { json: true });
         if(decode === null)
-        return res.status(500).send('Token not valid');
+        return res.status(401).send('Token not valid');
         else
       {
         const exam_id = Number(req.body.examID);

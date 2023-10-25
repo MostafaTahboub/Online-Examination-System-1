@@ -5,12 +5,16 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "test": "tsc && jest",
     "build": "tsc --project .",
     "build-tsc": "tsc -w",
     "run-watch": "nodemon ./dist/index.js",
     "dev": "concurrently \"npm:build-tsc\"  \"npm:run-watch\"",
     "typeorm": "typeorm-ts-node-commonjs",
-    "test": "tsc && jest"
+
+    "migration": "typeorm migration:create ./migration/CreateAdmin",
+    "migration-revert": "typeorm migration:revert -- -d ./dist/DB/dataSource.js"
+
   },
   "repository": {
     "type": "git",
