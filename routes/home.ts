@@ -50,7 +50,7 @@ router.post("/signin", validateUserLogin, async (req, res) => {
         maxAge: 30 * 60 * 1000,
       });
       baseLogger.info(`New login from ( ${data.fullName} ) user`)
-      res.status(200).send(200);
+      res.status(200).send("Welcome back");
     })
     .catch((err) => {
       baseLogger.info("Trying to login with invalid credintials");

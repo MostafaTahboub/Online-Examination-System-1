@@ -2,6 +2,8 @@ import express from 'express'
 import { User } from '../DB/Entities/User.js';
 import jwt from 'jsonwebtoken'
 import ableToReset from '../middleware/validation/resetPwd.js';
+import sendEmail from '../controllers/SES.js';
+import bcrypt from "bcrypt";
 
 const router = express.Router();
 
@@ -26,8 +28,9 @@ const payload = {
     id: user.id
 };
 const token = jwt.sign(payload, secret, {expiresIn: '5m'});;
-const link = `http://localhost:3000/reset-password/${user.id}/${token}`;
+const link = `http://localhost:${process.env.PORT}/reset-password/${user.id}/${token}`;
 //send the email using ses
+sendEmail(payload.email, "Password Reset", `${link}`)
 console.log(link);
 res.send('Password reset link has been sent to your email...');
 });
@@ -70,15 +73,19 @@ router.post("/reset-password/:id/:token", async(req, res) => {
         const payload = jwt.verify(token, secret);
         if(ableToReset(password, password2) === true)
         {
-            user.password = password;
+            let hashPassword = async(password:string) => {
+                if (password) {
+                  user.password = await bcrypt.hash(password, 10);
+                }
+              }
+            hashPassword(password);
+            await user.save();
             res.send(password);
         }
         //validate password and password 2 should match express validator
         //we can simply find the user with the payload email and id and finally update with new password
         //hash the password
-        user.password = password;
-        await user.save();
-        res.send("Your password has been reset");
+        
 
     } catch (error) {
         console.log(error);

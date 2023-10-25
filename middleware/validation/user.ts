@@ -26,13 +26,20 @@ const validateUser = async (
   }
 
   const test = await User.findOneBy({
-    name: req.body.userName,
+    email: req.body.email,
   });
 
   if (test) {
-    return res.status(409).send("choose another userName :)");
+    return res.status(409).send("choose another email :)");
   }
 
+  const test1 = await User.findOneBy({
+    username: req.body.userName,
+  });
+
+  if (test) {
+    return res.status(409).send("choose another username :)");
+  }
   if (user.type !== "instructor" && user.type !== "student") {
     errorList.push(`There are no such role!`);
   }
