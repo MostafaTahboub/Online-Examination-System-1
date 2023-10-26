@@ -132,4 +132,4 @@ function generateExamCode(title: string) {
 
 
 
-export { createExam, updateExam, createExamRandom, randomizeQuestions, shuffleArray, fetchQuestionsForExam };
+export { createExam, updateExam, createExamRandom, randomizeQuestions, generateExamCode,shuffleArray, fetchQuestionsForExam };

@@ -11,10 +11,8 @@
     "run-watch": "nodemon ./dist/index.js",
     "dev": "concurrently \"npm:build-tsc\"  \"npm:run-watch\"",
     "typeorm": "typeorm-ts-node-commonjs",
-
     "migration": "typeorm migration:create ./migration/CreateAdmin",
     "migration-revert": "typeorm migration:revert -- -d ./dist/DB/dataSource.js"
-
   },
   "repository": {
     "type": "git",
@@ -49,6 +47,7 @@
     "@types/jest": "^29.5.6",
     "@types/jsonwebtoken": "^9.0.3",
     "@types/node": "^20.8.4",
+    "@types/supertest": "^2.0.15",
     "@types/uuid": "^9.0.6",
     "@types/validator": "^13.11.2",
     "concurrently": "^8.2.1",

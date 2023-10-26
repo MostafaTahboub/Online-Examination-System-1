@@ -9,12 +9,12 @@ import baseLogger from "../log.js";
 
 var router = express.Router();
 
-router.post('/new', authenticate,  validateCreateQuestion, async (req, res) => {
+router.post('/new', authenticate, validateCreateQuestion, async (req, res) => {
 
     const questionData = req.body;
     const question = new Question();
 
-    const subject = await Subject.findOneBy({ id:questionData.subjectId });
+    const subject = await Subject.findOneBy({ id: questionData.subjectId });
 
     if (subject) {
 
@@ -24,32 +24,15 @@ router.post('/new', authenticate,  validateCreateQuestion, async (req, res) => {
         question.subject = subject;
     }
     if (question.type === 'TrueFalse') {
-        if(questionData.answer && questionData.answer === ("T"||"F"))
-        {question.answer = questionData.answer;}
-        else {
-            return res.status(400).send("invalid question answer")
-        }
+        question.answer = questionData.answer;
     } else if (question.type === 'MultipleChoice') {
-        if(questionData.options)
-        {question.options = questionData.options;}
-        else {
-            return res.status(400).send("Invalid options for multiple choice type questions");
-        }
-        if(questionData.correctAnswer && questionData.correctAnswer === ("A"||"B"||"C"||"D"))
-        {question.correctAnswer = questionData.correctAnswer;}
-        else {
-            return res.status(400).send("invalid MCQ answer")
-        }
+        question.options = questionData.options;
+        question.correctAnswer = questionData.correctAnswer;
     } else if (question.type === 'FillInTheBlank') {
-        if(questionData.blanks)
-        {question.blanks = questionData.blanks;}
-        else {return res.status(400).send("Blanks is required");}
-        if(questionData.blankAnswer)
-        {question.blankAnswer = questionData.blankAnswer;}
-        else {return res.status(400).send("BlankAnswer is required");}
-    }
-    else{
-        return res.status(400).send("invalid question type")
+        question.blanks = questionData.blanks;
+        question.blankAnswer = questionData.blankAnswer;
+    } else {
+        return res.status(400).send("there is no question with this name ");
     }
 
     try {
@@ -74,35 +57,36 @@ router.put('/edit', authenticate, validateCreateQuestion, async (req, res) => {
     }
 });
 
-router.get('/get/:id',authenticate, async (req, res) => {
-    if(req.body.id)
-    {const id = Number(req.params.id);
-    const existingQuestion = await Question.findOneBy({id:id});
-    
-    if (!existingQuestion) {
-        baseLogger.info(`Trying to retrive a question that dosn't exist`)
-        return res.status(404).send("question not found ");
-    }
+router.get('/get/:id', authenticate, async (req, res) => {
+    if (req.body.id) {
+        const id = Number(req.params.id);
+        const existingQuestion = await Question.findOneBy({ id: id });
 
-    else {
-        baseLogger.info(`The qustion with id: ${existingQuestion.id} has been retrived`);
-        res.status(200).json({ question: existingQuestion });
-    }}
+        if (!existingQuestion) {
+            baseLogger.info(`Trying to retrive a question that dosn't exist`)
+            return res.status(404).send("question not found ");
+        }
+
+        else {
+            baseLogger.info(`The qustion with id: ${existingQuestion.id} has been retrived`);
+            res.status(200).json({ question: existingQuestion });
+        }
+    }
     else {
         return res.status(400).send("Enter the question id");
     }
 });
 
 router.get('/all', (req, res) => {
-    
+
     getAllQuestions(req, res);
 });
 
- 
+
 router.delete('/delete/:id', async (req, res) => {
     try {
-         const id = Number(req.params.id);
-        const existingQuestion = await Question.findOneBy({id:id});
+        const id = Number(req.params.id);
+        const existingQuestion = await Question.findOneBy({ id: id });
 
         if (!existingQuestion) {
             baseLogger.error(`Trying to delete a question that isn't exist`);

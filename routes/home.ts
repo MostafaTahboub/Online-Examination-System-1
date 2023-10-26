@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post("/signup", validateUser, async (req, res) => {
   try {
-    let user = new User();
+    let user = new User();    
     user.username = req.body.userName;
     user.name = req.body.name;
     user.email = req.body.email;
@@ -24,7 +24,7 @@ router.post("/signup", validateUser, async (req, res) => {
       user.role = role[0] || null;
       console.log(user.role);
     });
-    user.save();
+    await user.save();
     baseLogger.info(`new ${Role.name} has been registered`);
     sendEmail(user.email, "Online-Examination-System", `Hello user ${user.id} you just join our family`);
     res.status(201).send("user has been added successfully");
@@ -33,6 +33,7 @@ router.post("/signup", validateUser, async (req, res) => {
     res.status(500).send("something went wrong ");
   }
 });
+
 
 router.post("/signin", validateUserLogin, async (req, res) => {
   const email = req.body.email;
@@ -50,7 +51,7 @@ router.post("/signin", validateUserLogin, async (req, res) => {
         maxAge: 30 * 60 * 1000,
       });
       baseLogger.info(`New login from ( ${data.fullName} ) user`)
-      res.status(200).send(200);
+      res.status(200).send("ok");
     })
     .catch((err) => {
       baseLogger.info("Trying to login with invalid credintials");
