@@ -12,6 +12,5 @@ export default {
     transformIgnorePatterns: [
       "node_modules/(?!(jest-)?@?react-native|@react-native-community|@react-navigation|aws-amplify-react-native|@ui-kitten)",
     ],
-    "test": "jest --runInBand signup.test.js signin.test.js signout.test.js"
-    
+        
   }; 

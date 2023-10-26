@@ -28,42 +28,42 @@ afterAll(async () => {
   await dataSource.destroy();
 });
 
-  const roleName = 'instructor';
+const roleName = 'instructor';
 
-  const userData = {
-    userName: 'majedT',
-    name: "majed",
-    email: "majed@22gmail.com",
-    password: "4545sfdafds",
-    type: roleName
-  }
+const userData = {
+  userName: 'hnosh',
+  name: "hain",
+  email: "hani@22gmail.com",
+  password: "4545sfdafds",
+  type: roleName
+}
 
-  const loginData = {
-    email: "majed@22gmail.com",
-    password: "4545sfdafds"
-  }
-
-
-  describe('POST /signup', () => {
-
-      it('should create a new user', async () => {
-
-        const response = await request(app)
-          .post('/signup')
-          .send(userData);
-
-        expect(response.status).toBe(201);
-        expect(response.text).toBe('user has been added successfully');
-      });
-    });
+const loginData = {
+  email: "hani@22gmail.com",
+  password: "4545sfdafds"
+}
 
 
-  describe('POST /signin', () => {
+describe('POST /signup', () => {
+
+  it('should create a new user', async () => {
+
+    const response = await request(app)
+      .post('/signup')
+      .send(userData);
+
+    expect(response.status).toBe(201);
+    expect(response.text).toBe('user has been added successfully');
+  });
+});
+
+
+describe('POST /signin', () => {
 
   it('should login', async () => {
     const response = await request(app)
       .post('/signin')
-      .send(userData);
+      .send(loginData);
 
     expect(response.status).toBe(200);
     expect(response.text).toBe("ok");
@@ -93,7 +93,7 @@ describe('POST /signout', () => {
     expect(response.status).toBe(200);
     expect(response.text).toBe('See You Soon My User');
 
-  });     
+  });
 
   it('should return 401 when no valid token is provided', async () => {
 
