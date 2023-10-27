@@ -9,7 +9,7 @@ import baseLogger from "../log.js";
 
 var router = express.Router();
 
-router.post('/new', authenticate,  validateCreateQuestion, async (req, res) => {
+router.post('/new', authenticate, authorize("POST_Question"), validateCreateQuestion, async (req, res) => {
 
     const questionData = req.body;
     const question = new Question();
@@ -62,7 +62,7 @@ router.post('/new', authenticate,  validateCreateQuestion, async (req, res) => {
     }
 });
 
-router.put('/edit', authenticate, validateCreateQuestion, async (req, res) => {
+router.put('/edit', authenticate, authorize("PUT_Question"), validateCreateQuestion, async (req, res) => {
 
     try {
         await updateQuestion(req, res);
@@ -74,7 +74,7 @@ router.put('/edit', authenticate, validateCreateQuestion, async (req, res) => {
     }
 });
 
-router.get('/get/:id',authenticate, async (req, res) => {
+router.get('/get/:id',authenticate, authorize("GET_Question"), async (req, res) => {
     if(req.body.id)
     {const id = Number(req.params.id);
     const existingQuestion = await Question.findOneBy({id:id});
@@ -93,13 +93,13 @@ router.get('/get/:id',authenticate, async (req, res) => {
     }
 });
 
-router.get('/all', (req, res) => {
+router.get('/all', authenticate, authorize("GET_Question"), (req, res) => {
     
     getAllQuestions(req, res);
 });
 
  
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id', authenticate, authorize("DELETE_Question"), async (req, res) => {
     try {
          const id = Number(req.params.id);
         const existingQuestion = await Question.findOneBy({id:id});

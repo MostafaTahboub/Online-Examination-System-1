@@ -10,7 +10,7 @@ import baseLogger from "../log.js";
 
 const router = express.Router();
 
-router.post("/newRole", authenticate, authorize("admin"), async (req, res) => {
+router.post("/newRole", authenticate, authorize("Admin"), async (req, res) => {
   try {
     const permissions = req.body.permissions;
 
@@ -62,7 +62,7 @@ router.post("/newRole", authenticate, authorize("admin"), async (req, res) => {
   }
 });
 
-router.get("/all", authenticate, authorize("admin"), async (req, res) => {
+router.get("/all", authenticate, authorize("Admin"), async (req, res) => {
   try {
     const roles = await dataSource
       .createQueryBuilder()
@@ -78,7 +78,7 @@ router.get("/all", authenticate, authorize("admin"), async (req, res) => {
 });
 
 ///the modification done on the Root
-router.post("/assign_role_to_user", authenticate, authorize("admin"), async (req, res) => {
+router.put("/assign_role_to_user", authenticate, authorize("Admin"), async (req, res) => {
   try {
 
     let x: Role | null;

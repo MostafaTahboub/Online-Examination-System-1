@@ -9,6 +9,7 @@ import { Enrollment } from "../DB/Entities/Enrollment.js";
 import baseLogger from "../log.js";
 import { authenticate } from "../middleware/auth/authenticate.js";
 import sendEmail from "../controllers/SES.js";
+import { authorize } from "../middleware/auth/authorize.js";
 
 var router = express.Router();
 
@@ -17,6 +18,7 @@ router.post(
   validateUserEnrollment,
   validateExamEnrollment,
   authenticate,
+  authorize("POST_Enrollment"),
   async (req, res) => {
     try {
       const userId = req.body.userId;

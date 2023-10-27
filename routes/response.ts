@@ -16,7 +16,7 @@ const router = express.Router();
 //     })
 // });
 
-router.get(  "/all",authenticate,authorize("GET_Respnses"),(req, res, next) => {
+router.get(  "/all", authenticate, (req, res, next) => {
     
   const payload = {
       page: req.query.page?.toString() || "1",

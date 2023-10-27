@@ -9,7 +9,7 @@ import baseLogger from "../log.js";
 import { EqualOperator } from "typeorm";
 const router = express.Router();
 
-router.get("/by_user", authenticate, async (req, res) => {
+router.get("/by_user", authenticate, authorize("GET_User_Analytics"), async (req, res) => {
   try {
     const token = req.cookies["token"];
     const decode = jwt.decode(token, { json: true });
@@ -38,6 +38,8 @@ router.get("/by_user", authenticate, async (req, res) => {
 
 router.get(
   "/By_exam",
+  authenticate,
+  authorize("GET_Exam_Analytics"),
   async (req, res) => {
     try {
         const token = req.cookies["token"];
