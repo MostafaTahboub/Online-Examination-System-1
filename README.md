@@ -107,7 +107,6 @@ Responses
 
 user succefully singed out and his cookies deleted
 
-
 401 - Bad Request
 
 May I help you to signin
@@ -138,6 +137,13 @@ Example Value:
  "name": "Math"
 }
 ```
+401 - Bad Request
+
+May I help you to signin
+
+403 - Bad Request
+
+you don't have the permission to access this resource!
 
 500 - Bad Request
 
@@ -178,6 +184,13 @@ Example Value:
  
 }
 ```
+401 - Bad Request
+
+May I help you to signin
+
+403 - Bad Request
+
+you don't have the permission to access this resource!
 
 400 - Bad Request
 
@@ -281,9 +294,17 @@ Example Value:
 
 All field are required
 
+401 - Bad Request
+
+May I help you to signin
+
 409 - Conflict
 
 username already taken.
+
+403 - Bad Request
+
+you don't have the permission to access this resource!
 
 500 - Bad Request
 
@@ -388,6 +409,10 @@ All field are required
 
 May I Help You To signin
 
+403 - Bad Request
+
+you don't have the permission to access this resource!
+
 500 - Bad Request
 
 General server error, unspecified.
@@ -429,6 +454,10 @@ All field are required
 
 May I Help You To Signin
 
+403 - Bad Request
+
+you don't have the permission to access this resource!
+
 500 - Bad Request
 
 General server error, unspecified.
@@ -458,6 +487,10 @@ question not exist
 
 May I Help You To Signin
 
+403 - Bad Request
+
+you don't have the permission to access this resource!
+
 500 - Bad Request
 
 General server error, unspecified.
@@ -476,6 +509,13 @@ Responses
 
 all questions has been retrived successfully
 
+401 - Bad Request
+
+May I help you to signin
+
+403 - Bad Request
+
+you don't have the permission to access this resource!
 
 500 - Bad Request
 
@@ -501,6 +541,10 @@ Enter the question id
 404 - Bad Request
 
 question not exist
+
+403 - Bad Request
+
+you don't have the permission to access this resource!
 
 401 - Bad Request
 
@@ -538,12 +582,259 @@ May I Help You To Signin
 
 All field are required
 
+403 - Bad Request
+
+you don't have the permission to access this resource!
+
 500 - Bad Request
 
 General server error, unspecified.
 
-//add exam route
------------
+Endpoint: POST /exam/new
+***
+
+Description
+
+Endpoint to create new exam
+
+Request Body
+
+|    Field   |   Type   |     Description        | Required |
+ ------------|----------|------------------------|----------|
+|title       |  String  | The exam title         |    Yes   |
+|score       |  String  | The exam score         |    Yes   |
+|startTime   |  String  | when the exam starts   |    Yes   |
+|duration    |  String  | The time to solve exam |    Yes   |
+|questionIds | String[] | The id of the questions|    Yes   |
+
+Responses
+
+201 - Created
+
+exam created successfully
+
+401 - Bad Request
+
+May I Help You To Signin
+
+403 - Bad Request
+
+you don't have the permission to access this resource!
+
+400 - Bad Request
+
+All field are required
+
+500 - Bad Request
+
+Endpoint: POST /exam/newByRandom
+***
+
+Description
+
+Endpoint to create new exam with random questions
+
+Request Body
+
+|       Field     |   Type   |     Description        | Required |
+ -----------------|----------|------------------------|----------|
+|title            |  String  | The exam title         |    Yes   |
+|startTime        |  String  | when the exam starts   |    Yes   |
+|duration         |  String  | The time to solve exam |    Yes   |
+|numberOfQuestions|  Number  | The id of the questions|    Yes   |
+
+Responses
+
+201 - Created
+
+exam created successfully
+
+401 - Bad Request
+
+May I Help You To Signin
+
+400 - Bad Request
+
+All field are required
+
+403 - Bad Request
+
+you don't have the permission to access this resource!
+
+500 - Bad Request
+General server error, unspecified.
+
+Endpoint: PUT /exam/edit
+***
+
+Description
+
+Endpoint to edit existing exam
+
+Request Body
+
+|    Field   |   Type   |     Description        | Required |
+ ------------|----------|------------------------|----------|
+|title       |  String  | The exam title         |    Yes   |
+|score       |  String  | The exam score         |    Yes   |
+|startTime   |  String  | when the exam starts   |    Yes   |
+|duration    |  String  | The time to solve exam |    Yes   |
+|questionIds | String[] | The id of the questions|    Yes   |
+
+Responses
+
+201 - Created
+
+exam updated successfully
+
+401 - Bad Request
+
+May I Help You To Signin
+
+403 - Bad Request
+
+you don't have the permission to access this resource!
+
+404 - Bad Request
+Exam not found
+
+500 - Bad Request
+something went wrong when trying to update the Exam
+
+Endpoint: GET /exam/getExam/:id
+***
+
+Description
+
+Endpoint to retrive an existing exam using it's id
+
+Request Body
+
+|  Field  |   Type   |    Description   | Required |
+ ---------|----------|------------------|----------|
+|id       |  Number  | The exam id      |    Yes   |
+
+Responses
+
+200 - OK
+
+You will get the exam 
+
+401 - Bad Request
+
+May I Help You To Signin
+
+403 - Bad Request
+
+you don't have the permission to access this resource!
+
+404 - Bad Request
+
+Exam not found
+
+400 - Bad Request
+
+Exam id required
+
+500 - Bad Request
+internal server error
+
+Endpoint: POST /exam/start
+***
+
+Description
+
+Endpoint to start exam using it's id and password
+
+Request Body
+
+|  Field  |   Type   |    Description   | Required |
+ ---------|----------|------------------|----------|
+|id       |  Number  | The exam id      |    Yes   |
+|password |  String  | The exam password|    Yes   |
+
+Responses
+
+200 - OK
+
+Exam started successfully. Be careful when submitting answers
+
+401 - Bad Request
+
+May I Help You To Signin
+
+404 - Bad Request
+
+Exam not found
+
+400 - Bad Request
+
+Exam id and password required
+
+400 - Bad Request
+
+password isn't correct, You are a good student (NERD), but please wait until the exam starts, The exam time has ended. See you in the summer
+
+404 - Bad Request
+
+User not found
+
+403 - Bad Request
+
+You are not enrolled in this exam, You can't enter the exam more than once
+
+500 - Bad Request
+An error occurred while starting the exam
+
+Endpoint: POST /exam/submit
+***
+
+Description
+
+Endpoint to submit exam answers 
+
+Request Body
+
+|      Field     |     Type   |      Description      | Required |
+ ----------------|------------|-----------------------|----------|
+|submittedAnswers|  String[]  | The exam answers      |    Yes   |
+
+
+Responses
+
+200 - OK
+
+The exam has finished, and the response has been submitted. Best of luck!
+
+401 - Bad Request
+
+May I Help You To Signin
+
+404 - Bad Request
+
+The exam has finished. You can't submit. See you in the summer
+
+400 - Bad Request
+
+submittedAnswers required
+
+400 - Bad Request
+
+Invalid token
+
+404 - Bad Request
+
+User not found
+
+403 - Bad Request
+you don't have the permission to access this resource!
+
+403 - Bad Request
+
+You are not enrolled in this exam, You can't enter the exam more than once
+
+500 - Bad Request
+No valid exam found for the user., Something went wrong. make the start exam before, An error occurred while submitting the exam.
 
 Endpoint: GET /response/all
 ***
@@ -587,6 +878,10 @@ Hi ${user.name} your exams rate is: ${sum / responses.length}
 
 May I Help You To Signin
 
+403 - Bad Request
+
+you don't have the permission to access this resource!
+
 500 - Bad Request
 
 General server error, unspecified.
@@ -611,6 +906,10 @@ Hi ${user.name} your exams rate is: ${sum / responses.length}
 401 - Bad Request
 
 Token not valid
+
+403 - Bad Request
+
+you don't have the permission to access this resource!
 
 400 - Bad Request
 
