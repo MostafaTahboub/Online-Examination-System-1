@@ -2,6 +2,7 @@ import express from "express";
 import isEmail from "validator/lib/isEmail.js";
 import { User } from "../../DB/Entities/User.js";
 import baseLogger from "../../log.js";
+
 const validateUser = async (
   req: express.Request,
   res: express.Response,
@@ -47,9 +48,9 @@ const validateUser = async (
   if (errorList.length) {
     baseLogger.error("data provided to create user don't match the restrictions");
     res.status(400).send(errorList);
-  } else {
-    next();
+  } else {    
+    next();            
   }
-};
+};     
 
 export { validateUser };
