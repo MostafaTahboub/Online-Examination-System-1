@@ -1,10 +1,12 @@
 import express from "express";
 import { Subject } from "../DB/Entities/Subject.js";
 import baseLogger from "../log.js";
+import { authenticate } from "../middleware/auth/authenticate.js";
+import { authorize } from "../middleware/auth/authorize.js";
 
 var router = express.Router();
 
-router.post("/new", async (req, res) => {
+router.post("/new",authenticate, authorize("POST_Subject"), async (req, res) => {
 
   try {
     let newSubject = new Subject();

@@ -19,7 +19,7 @@ import { User } from "../DB/Entities/User.js";
 
 var router = express.Router();
 
-router.post("/new", authenticate, validateCreateExam, async (req, res) => {
+router.post("/new", authenticate, authorize("POST_Exam"), validateCreateExam, async (req, res) => {
   try {
     await createExam(req, res);
   } catch (error) {
@@ -29,7 +29,7 @@ router.post("/new", authenticate, validateCreateExam, async (req, res) => {
 });
 
 // need some validation here
-router.post("/newByRandom", async (req, res) => {
+router.post("/newByRandom", authenticate, authorize("POST_Exam"), async (req, res) => {
   try {
     await createExamRandom(req, res);
   } catch (error) {
@@ -38,7 +38,7 @@ router.post("/newByRandom", async (req, res) => {
   }
 });
 
-router.put("/edit", async (req, res) => {
+router.put("/edit",authenticate, authorize("PUT_Exam"), async (req, res) => {
   try {
     await updateExam(req, res);
     res.status(201).send("Exam updated succeffylly");
@@ -48,9 +48,13 @@ router.put("/edit", async (req, res) => {
   }
 });
 
-router.get("/getExam/:id", async (req, res) => {
+router.get("/getExam/:id", authenticate, authorize("GET_Exam"), async (req, res) => {
   try {
     const id = Number(req.params.id);
+    if(!id)
+    {
+      return res.status(400).send("Exam id required")
+    }
 
     const existingExam = await Exam.findOne({
       where: { id: id },
@@ -68,9 +72,13 @@ router.get("/getExam/:id", async (req, res) => {
   }
 });
 
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/delete/:id", authenticate, authorize("DELETE_Exam"), async (req, res) => {
   try {
     const id = Number(req.params.id);
+    if(!id)
+    {
+      return res.status(400).send("Exam id required")
+    }
     const existingExam = await Exam.findOneBy({ id });
 
     if (!existingExam) {
@@ -94,12 +102,16 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-router.post("/start", async (req, res) => {
+router.post("/start", authenticate, authorize("Take_Exam"), async (req, res) => {
   try {
     console.log("from start");
     const token = req.cookies.token;
     const examId = req.body.examId;
     const password = req.body.password;
+    if(!examId || !password)
+    {
+      return res.status(400).send("Exam id and password required")
+    }
 
     // Find the exam with the provided examId
     const exam = await Exam.findOne({
@@ -216,11 +228,15 @@ router.post("/start", async (req, res) => {
   }
 });
 
-router.post("/submit", async (req, res) => {
+router.post("/submit", authenticate, authorize("Take_Exam"), async (req, res) => {
   try {
     console.log("from submit ");
     const token = req.cookies.token;
     const { submittedAnswers } = req.body;
+    if(!submittedAnswers)
+    {
+      return res.status(400).send("submittedAnswers required")
+    }
     const decoded = jwt.decode(token, { json: true });
 
     if (decoded) {

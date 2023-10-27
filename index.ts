@@ -44,14 +44,13 @@ app.get("/", (req, res) => {
 app.listen(PORT, async () => {
   console.log(`App is lestining to PORT.. : ` + PORT);
   baseLogger.info(`App is lestining to PORT : ${PORT}`);
-
+  
   dataSource
     .initialize()
     .then(() => {
       // createAdminUser();
       baseLogger.info("connected to database :)");
       console.log("connected to database :)");
-
     })
     .catch((err) => {
       baseLogger.error(`failed to connect connect to db !! ${err}`);

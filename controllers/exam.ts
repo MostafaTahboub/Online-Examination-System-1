@@ -51,6 +51,7 @@ const updateExam = (async (req: Request, res: response) => {
     });
     existingExam.numberOfQuestions = num;
     existingExam.questions = questions;
+    existingExam.save();
 });
 
 
