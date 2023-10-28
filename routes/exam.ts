@@ -16,6 +16,13 @@ import { Response } from "../DB/Entities/Response.js";
 import jwt from "jsonwebtoken";
 import { Exam_answers } from "../DB/Entities/Exam_answers.js";
 import { User } from "../DB/Entities/User.js";
+import AWS from 'aws-sdk';
+
+AWS.config.update({
+  accessKeyId: 'YOUR_AWS_ACCESS_KEY',
+  secretAccessKey: 'YOUR_AWS_SECRET_ACCESS_KEY',
+  region: 'us-east-1',
+});
 
 var router = express.Router();
 
@@ -48,6 +55,7 @@ router.put("/edit",authenticate, authorize("PUT_Exam"), async (req, res) => {
   }
 });
 
+
 router.get("/getExam/:id", authenticate, authorize("GET_Exam"), async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -71,6 +79,7 @@ router.get("/getExam/:id", authenticate, authorize("GET_Exam"), async (req, res)
     res.status(500).send("internal server error ");
   }
 });
+
 
 router.delete("/delete/:id", authenticate, authorize("DELETE_Exam"), async (req, res) => {
   try {
@@ -101,6 +110,7 @@ router.delete("/delete/:id", authenticate, authorize("DELETE_Exam"), async (req,
     res.status(500).send("something went wrong");
   }
 });
+
 
 router.post("/start", authenticate, authorize("Take_Exam"), async (req, res) => {
   try {
@@ -228,15 +238,13 @@ router.post("/start", authenticate, authorize("Take_Exam"), async (req, res) => 
   }
 });
 
-router.post("/submit", authenticate, authorize("Take_Exam"), async (req, res) => {
+
+
+router.post("/submit", async (req, res) => {
   try {
     console.log("from submit ");
     const token = req.cookies.token;
     const { submittedAnswers } = req.body;
-    if(!submittedAnswers)
-    {
-      return res.status(400).send("submittedAnswers required")
-    }
     const decoded = jwt.decode(token, { json: true });
 
     if (decoded) {
@@ -380,5 +388,6 @@ router.post("/submit", authenticate, authorize("Take_Exam"), async (req, res) =>
       .json({ message: "An error occurred while submitting the exam." });
   }
 });
+
 
 export default router;

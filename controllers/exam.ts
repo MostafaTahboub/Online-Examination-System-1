@@ -9,12 +9,11 @@ import { convertStartTime } from "../middleware/validation/examValidation.js";
 
 const createExam = async (req: Request, res: response) => {
 
-    const { title, duration, password, startTime, score, questionsIds } = req.body;
+    const { title, duration, password, startTime, questionsIds } = req.body;
     const newExam = new Exam();
     newExam.title = title;
     newExam.startTime = convertStartTime(startTime).toDate();
     newExam.duration = duration;
-    newExam.score = score;
     newExam.password = password;
     newExam.code = generateExamCode(title);
 
@@ -23,7 +22,13 @@ const createExam = async (req: Request, res: response) => {
             id: In(questionsIds)
         }
     });
+    let ExamScore = 0;
 
+    for (let i = 0; i < questions.length; i++) {
+        ExamScore += questions[i].weight;
+    }
+
+    newExam.score = ExamScore;
     newExam.questions = questions;
     newExam.numberOfQuestions = numberOfQuestions;
     await newExam.save()
@@ -107,7 +112,7 @@ const randomizeQuestions = (exam: Exam) => {
 }
 
 const fetchQuestionsForExam = async (exam: Exam) => {
-    
+
     const questions = exam.questions;
 
     return questions;
@@ -119,7 +124,7 @@ function generateExamCode(title: string) {
 
     const uuid = uuidv4();
 
-    const firstDigits = uuid.substring(0,6);
+    const firstDigits = uuid.substring(0, 6);
 
     const formattedCode = title.replace(/\s+/g, '-').toLowerCase() + '-' + firstDigits;
 
@@ -133,4 +138,4 @@ function generateExamCode(title: string) {
 
 
 
-export { createExam, updateExam, createExamRandom, randomizeQuestions, generateExamCode,shuffleArray, fetchQuestionsForExam };
+export { createExam, updateExam, createExamRandom, randomizeQuestions, generateExamCode, shuffleArray, fetchQuestionsForExam };

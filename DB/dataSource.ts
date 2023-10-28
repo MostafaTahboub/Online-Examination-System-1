@@ -31,7 +31,7 @@ const dataSource = new DataSource({
     Response,
   ],
   migrations: [CreatePermissions1698265178685, CreateRoles1698265168781, CreateAdmin1698221813286],
-  migrationsRun: true,
+  // migrationsRun: true,
   synchronize: true,
   logging: false,
 });

@@ -30,7 +30,7 @@ const updateQuestion = (async (req: Request, res: Response) => {
         question.options = questionData.options;
         question.correctAnswer = questionData.correctAnswer;
     } else if (question.type === 'FillInTheBlank') {
-        question.blanks = questionData.blanks;
+        question.blank = questionData.blanks;
         question.blankAnswer = questionData.blankAnswer;
     }
     else {
