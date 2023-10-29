@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import express, { urlencoded } from "express";
+import express from "express";
 import "./config.js";
 import dataSource from "./DB/dataSource.js";
 import createAdminUser from "./controllers/admin.js";
@@ -44,7 +44,7 @@ app.get("/", (req, res) => {
 app.listen(PORT, async () => {
   console.log(`App is lestining to PORT.. : ` + PORT);
   baseLogger.info(`App is lestining to PORT : ${PORT}`);
-  
+
   dataSource
     .initialize()
     .then(() => {

@@ -9,7 +9,8 @@
     "build": "tsc --project .",
     "build-tsc": "tsc -w",
     "run-watch": "nodemon ./dist/index.js",
-    "dev": "concurrently \"npm:build-tsc\"  \"npm:run-watch\"",
+    "start-consumer": "node ./dist/routes/consumer.rs",
+    "dev": "concurrently \"npm:build-tsc\"  \"npm:run-watch\" \"npm:start-consumer\"",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration": "typeorm migration:create ./migration/CreateAdmin",
     "migration-revert": "typeorm migration:revert -- -d ./dist/DB/dataSource.js"
@@ -21,6 +22,7 @@
   "author": "Mohammed Taradeh && mostafa tahboub",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.438.0",
     "aws-sdk": "^2.1482.0",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
