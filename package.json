@@ -10,7 +10,7 @@
     "build-tsc": "tsc -w",
     "run-watch": "nodemon ./dist/index.js",
     "start-consumer": "node ./dist/routes/consumer.rs",
-    "dev": "concurrently \"npm:build-tsc\"  \"npm:run-watch\" \"npm:start-consumer\"",
+    "dev": "concurrently \"npm:build-tsc\"  \"npm:run-watch\"",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration": "typeorm migration:create ./migration/CreateAdmin",
     "migration-revert": "typeorm migration:revert -- -d ./dist/DB/dataSource.js"

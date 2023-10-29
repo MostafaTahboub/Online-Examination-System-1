@@ -1,18 +1,19 @@
 import { Consumer } from 'sqs-consumer';
-import { sqsClient,DeleteMessageCommand } from '../aws-config.js'; // Adjust the path
 import { Exam_answers } from '../DB/Entities/Exam_answers.js';
+import { DeleteMessageCommand, sqsClient } from '../aws-config.js'; // Adjust the path
 
 
-const app = Consumer.create({
+const queueConsumer = Consumer.create({
+  sqs: sqsClient,
   queueUrl: 'https://sqs.us-east-1.amazonaws.com/918000663876/exam-submissions-queue',
   handleMessage: async (message) => {
     try {
       console.log("from consumer ");
-      const messageBody = JSON.parse(message.Body||'');
+      const messageBody = JSON.parse(message.Body || '');
 
       const { userId, lastResponse, submittedAnswers } = messageBody;
       const shuffledQuestionOrder = lastResponse.shuffledQuestionOrder; // Assuming you store the shuffled order in the Response
-      const currentExam = lastResponse?.currentExam; 
+      const currentExam = lastResponse?.currentExam;
       const examAnswers = [];
 
       for (let i = 0; i < shuffledQuestionOrder.length; i++) {
@@ -32,7 +33,7 @@ const app = Consumer.create({
       for (let i = 0; i < currentExam?.questions?.length; i++) {
         const questionIndex = shuffledQuestionOrder[i];
         const shuffledAnswer = submittedAnswers[i];
-      
+
         if (
           currentExam.questions &&
           questionIndex >= 0 &&
@@ -88,8 +89,8 @@ const app = Consumer.create({
   },
 });
 
-app.on('error', (err) => {
+queueConsumer.on('error', (err) => {
   console.error('Error:', err.message);
 });
 
-app.start();
+export default queueConsumer;
