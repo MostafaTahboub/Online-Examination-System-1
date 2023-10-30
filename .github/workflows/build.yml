@@ -16,10 +16,11 @@ jobs:
     outputs:
       ec2_ips: ${{ steps.get_instance_ips.outputs.ips }}
       image_version: ${{ steps.image_version.outputs.gitsha }}
-
+     
     steps:
       - uses: actions/checkout@v3
-
+      - name: output the image_Version
+        run : echo outputs.image_version
       - name: Set image version (tag)
         id: image_version
         run: echo "gitsha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
