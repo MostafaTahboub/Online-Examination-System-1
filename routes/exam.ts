@@ -139,7 +139,10 @@ router.post("/start", authenticate, authorize("Take_Exam"), async (req, res) => 
     const shuffledOrder = exam.questions.map((question) => question.id);
     shuffleArray(shuffledOrder); // Shuffle the order
     const shuffledOrderJSON = JSON.stringify(shuffledOrder);
-
+    
+    const questionsInShuffledOrder = shuffledOrder.map((questionIndex) => {
+      return exam.questions.find((question) => question.id === questionIndex);
+    }); 
     console.log({ questions: shuffledOrder });
     console.log({ questions: shuffledOrderJSON });
 
@@ -231,168 +234,15 @@ router.post("/start", authenticate, authorize("Take_Exam"), async (req, res) => 
 
     res
       .status(200)
-      .send("Exam started successfully. Be careful when submitting answers.");
+      .json({msg:"Exam started successfully. Be careful when submitting answers.",
+          questions:questionsInShuffledOrder
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred while starting the exam.");
   }
 });
 
-
-
-// router.post("/submit", async (req, res) => {
-//   try {
-//     console.log("from submit ");
-//     const token = req.cookies.token;
-//     const { submittedAnswers } = req.body;
-//     const decoded = jwt.decode(token, { json: true });
-
-//     if (decoded) {
-//       const userId = decoded.userId;
-//       console.log(`User ID: ${userId}`);
-
-//       const lastResponse = await Response.findOne({
-//         relations: {
-//           user: true,
-//           exam: true,
-//         },
-//         where: {
-//           user: userId,
-//           status: "inProgress",
-//         },
-//         order: {
-//           createdAt: "DESC",
-//         },
-//       });
-
-//       console.log("Last Response:", lastResponse);
-
-//       if (lastResponse) {
-//         const currentExamId = lastResponse.exam.id;
-//         console.log(currentExamId);
-//         const currentExam = await Exam.findOne({
-//           where: {
-//             id: currentExamId,
-//           },
-//           relations: ["questions"],
-//         });
-//         console.log("Current Exam:", currentExam);
-//         console.log("Current Exam Questions:", currentExam?.questions);
-
-//         if (currentExam) {
-//           const currentTime = new Date();
-//           const examEndTime = new Date(
-//             currentExam.startTime.getTime() + currentExam.duration * 60 * 1000
-//           );
-
-//           console.log("Current Time:", currentTime);
-//           console.log("Exam End Time:", examEndTime);
-
-//           if (examEndTime < currentTime) {
-//             lastResponse.totalScore = 0;
-//             await lastResponse.save();
-//             return res
-//               .status(404)
-//               .send(
-//                 "The exam has finished. You can't submit. See you in the summer."
-//               );
-//           }
-//             const submissionData={
-//                userId:userId,
-//               lastResponse:lastResponse
-//             }
-
-
-//           const shuffledQuestionOrder = lastResponse.shuffledQuestionOrder; // Assuming you store the shuffled order in the Response
-
-//           const examAnswers = [];
-
-//           for (let i = 0; i < shuffledQuestionOrder.length; i++) {
-//             const questionIndex = shuffledQuestionOrder[i];
-//             const exam_answers = new Exam_answers();
-//             exam_answers.response = lastResponse;
-//             exam_answers.user = lastResponse.user;
-//             exam_answers.exam = currentExam;
-//             exam_answers.answer = submittedAnswers[i];
-//             exam_answers.question = currentExam.questions[questionIndex - 1];
-//             await exam_answers.save();
-//             examAnswers.push(exam_answers);
-//           }
-
-//           let totalScore = 0;
-
-//           for (let i = 0; i < currentExam.questions.length; i++) {
-//             const questionIndex = shuffledQuestionOrder[i];
-//             const shuffledAnswer = submittedAnswers[i];
-
-//             // Check if currentExam.questions[questionIndex] exists and is an object
-//             if (
-//               currentExam.questions &&
-//               questionIndex >= 0 &&
-//               questionIndex <= currentExam.questions.length
-//             ) {
-//               const question = currentExam.questions[questionIndex - 1];
-
-//               if (question) {
-//                 switch (question.type) {
-//                   case "TrueFalse":
-//                     if (question.answer === shuffledAnswer) {
-//                       totalScore += question.weight;
-//                     }
-//                     break;
-//                   case "MultipleChoice":
-//                     if (question.correctAnswer === shuffledAnswer) {
-//                       totalScore += question.weight;
-//                     }
-//                     break;
-//                   case "FillInTheBlank":
-//                     if (question.blankAnswer === shuffledAnswer) {
-//                       totalScore += question.weight;
-//                     }
-//                     break;
-//                   default:
-//                     // Handle unknown question types
-//                     console.error("Unknown question type:", question.type);
-//                     break;
-//                 }
-//               } else {
-//                 console.error(
-//                   "Question is undefined for index:",
-//                   questionIndex
-//                 );
-//               }
-//             } else {
-//               console.error("Invalid question index:", questionIndex);
-//             }
-//           }
-
-//           lastResponse.totalScore = totalScore;
-//           lastResponse.exam_answers = examAnswers;
-//           lastResponse.status = "done";
-//           await lastResponse.save();
-
-//           res.status(200).json({
-//             msg: "The exam has finished, and the response has been submitted. Best of luck!",
-//             totalScore: totalScore,
-//           });
-//         } else {
-//           return res.status(500).send("No valid exam found for the user.");
-//         }
-//       } else {
-//         return res
-//           .status(500)
-//           .send("Something went wrong. make the start exam before .");
-//       }
-//     } else {
-//       return res.status(400).send("Invalid token");
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     res
-//       .status(500)
-//       .json({ message: "An error occurred while submitting the exam." });
-//   }
-// });
 
 router.post("/submit", async (req, res) => {
   try {
@@ -449,15 +299,34 @@ router.post("/submit", async (req, res) => {
               .status(404)
               .send(
                 "The exam has finished. You can't submit. See you in the summer."
-              );    
+              );
           }
-                  
+
+          const shuffledQuestionOrder = lastResponse.shuffledQuestionOrder; // Assuming you store the shuffled order in the Response
+
+          const examAnswers = [];
+
+          for (let i = 0; i < shuffledQuestionOrder.length; i++) {
+            const questionIndex = shuffledQuestionOrder[i];
+            const exam_answers = new Exam_answers();
+            exam_answers.response = lastResponse;
+            exam_answers.user = lastResponse.user;
+            exam_answers.exam = currentExam;
+            exam_answers.answer = submittedAnswers[i];
+            exam_answers.question = currentExam.questions[questionIndex - 1];
+            await exam_answers.save();
+            examAnswers.push(exam_answers);
+          }
+
+          lastResponse.exam_answers = examAnswers;
+          await lastResponse.save();
+
           const sendMessageCommand = new SendMessageCommand({
             QueueUrl: 'https://sqs.us-east-1.amazonaws.com/918000663876/exam-submissions-queue',
             MessageBody: JSON.stringify({
-              userId: userId,
-              lastResponse: lastResponse,
+              lastResponseId: lastResponse.id,
               submittedAnswers: submittedAnswers,
+              userId: userId
             }),
           });
 
@@ -488,5 +357,48 @@ router.post("/submit", async (req, res) => {
   }
 });
 
+
+router.get('/getMark', async (req, res) => {
+  try {
+
+    const token = req.cookies.token;
+    const examId = req.body.examId;
+
+    const decoded = jwt.decode(token, { json: true });
+    if (decoded) {
+
+      const userId = decoded.userId;
+      console.log(userId);
+      const exam = await Exam.findOneBy({ id: examId });
+
+      const response = await Response.findOne({
+        relations: {
+          user: true,
+          exam: true,
+        },
+        where: {
+          user: {
+            id: userId,
+          },
+          exam: {
+            id: examId,
+          }
+        }
+      });
+
+      console.log(response);
+
+      if (!response) {
+        res.status(404).send("there is no respones wiht this exam");
+      }
+
+      res.status(200).send(`Your totalScore is ${response?.totalScore}/${exam?.score}`);
+
+    }
+  } catch (error) {
+    res.status(500).send("something is went wrong ");
+    console.error(error);
+  }
+})
 
 export default router;

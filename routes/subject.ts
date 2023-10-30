@@ -6,7 +6,7 @@ import { authorize } from "../middleware/auth/authorize.js";
 
 var router = express.Router();
 
-router.post("/new",authenticate, authorize("POST_Subject"), async (req, res) => {
+router.post("/new", authenticate, authorize("POST_Subject"), async (req, res) => {
 
   try {
     let newSubject = new Subject();
@@ -18,6 +18,20 @@ router.post("/new",authenticate, authorize("POST_Subject"), async (req, res) => 
   } catch (error) {
     res.status(500).send("something went wrong ");
     baseLogger.error("error occured while creating subject : " + error);
+  }
+});
+
+
+router.get('/all', async (req, res) => {
+
+  try {
+    const subjects = await Subject.find();
+    
+    res.status(200).send(subjects);
+
+  } catch (error) {
+    res.status(500).send("something went wrong");
+    console.error(error);
   }
 });
 

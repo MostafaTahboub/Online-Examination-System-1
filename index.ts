@@ -47,9 +47,9 @@ app.listen(PORT, async () => {
   baseLogger.info(`App is lestining to PORT : ${PORT}`);
 
   dataSource
-    .initialize()
-    .then(() => {
-      createAdminUser();
+  .initialize()    
+  .then(() => {      
+      createAdminUser();      
       baseLogger.info("connected to database :)");
       console.log("connected to database :)");
     })

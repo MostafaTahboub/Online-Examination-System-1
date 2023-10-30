@@ -11,18 +11,20 @@ import { Response } from "./Entities/Response.js";
 import { CreateAdmin1698221813286 } from "../migration/1698221813286-CreateAdmin.js";
 import { CreatePermissions1698265178685 } from "../migration/1698265178685-CreatePermissions.js";
 import { CreateRoles1698265168781 } from "../migration/1698265168781-CreateRoles.js";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const dataSource = new DataSource({
   type: "mysql",
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
   username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  password:process.env.DB_PASSWORD,    
   database: process.env.DB_NAME,
-  entities: [
+  entities: [  
     User,
     Role,
-    Permission,
+    Permission,   
     Question,
     Exam,
     Subject,

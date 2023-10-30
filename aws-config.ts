@@ -8,5 +8,6 @@ const sqsClient = new SQSClient({
       secretAccessKey:process.env.SECRET_KEY_ID ||'',
     },
   });
+  
 
 export { sqsClient, SendMessageCommand, DeleteMessageCommand };

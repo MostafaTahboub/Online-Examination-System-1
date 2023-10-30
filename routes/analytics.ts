@@ -15,7 +15,8 @@ router.get("/by_user", authenticate, authorize("GET_User_Analytics"), async (req
     const decode = jwt.decode(token, { json: true });
     let sum: number = 0;
     if (decode !== null) {
-      let user = await User.findOneBy({ id: decode.userID });
+      let user = await User.findOneBy({ id: decode.userId });
+      console.log(user);
       if (user !== null) {
         if (user.responses !== null) {
           let responses: Response[] = user?.responses;
@@ -24,7 +25,7 @@ router.get("/by_user", authenticate, authorize("GET_User_Analytics"), async (req
           }
           res.status(200)
             .send(
-              `Hi ${user.name} your exams rate is: ${sum / responses.length}`
+              `Hi ${user.name} your exams rate is: ${sum / responses?.length}`
             );
             baseLogger.info(`The user: ${user.name} has viewed his exam rate by ${decode.fullName} which is: ${sum/responses.length}`)
         }
