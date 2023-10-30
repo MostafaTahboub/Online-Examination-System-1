@@ -16,8 +16,8 @@ router.get("/by_user",  authenticate, authorize("GET_User_Analytics"), async (re
     let sum: number = 0;
     let weight: number = 0;
     if (decode !== null) {
-      let user = await User.findOneBy({ email: decode.email });
 
+      let user = await User.findOneBy({ email: decode.email });
       if (user !== null) {
         if (user.exams !== undefined) {
           var responses: Response[] = [];
@@ -32,7 +32,7 @@ router.get("/by_user",  authenticate, authorize("GET_User_Analytics"), async (re
           }
           res.status(200)
             .send(
-              `Hi ${user.name} your exams rate is: ${sum / responses.length}`
+              `Hi ${user.name} your exams rate is: ${sum / responses?.length}`
             );
             baseLogger.info(`The user: ${user.name} has viewed his exam rate by ${decode.fullName} which is: ${sum/weight}`)
         }

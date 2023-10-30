@@ -16,6 +16,16 @@ import { Response } from "../DB/Entities/Response.js";
 import jwt from "jsonwebtoken";
 import { Exam_answers } from "../DB/Entities/Exam_answers.js";
 import { User } from "../DB/Entities/User.js";
+import { sqsClient, SendMessageCommand } from '../aws-config.js'; // Adjust the path
+import AWS from "aws-sdk";
+
+
+// Configure AWS SDK with your credentials and region
+AWS.config.update({
+  region: 'us-east-1',
+  accessKeyId: process.env.ACESS_KEY_ID,
+  secretAccessKey: process.env.SECRET_KEY_ID
+});
 
 var router = express.Router();
 
@@ -38,7 +48,7 @@ router.post("/newByRandom", authenticate, authorize("POST_Exam"), async (req, re
   }
 });
 
-router.put("/edit",authenticate, authorize("PUT_Exam"), async (req, res) => {
+router.put("/edit", authenticate, authorize("PUT_Exam"), async (req, res) => {
   try {
     await updateExam(req, res);
     res.status(201).send("Exam updated succeffylly");
@@ -48,11 +58,11 @@ router.put("/edit",authenticate, authorize("PUT_Exam"), async (req, res) => {
   }
 });
 
+
 router.get("/getExam/:id", authenticate, authorize("GET_Exam"), async (req, res) => {
   try {
     const id = Number(req.params.id);
-    if(!id)
-    {
+    if (!id) {
       return res.status(400).send("Exam id required")
     }
 
@@ -72,11 +82,11 @@ router.get("/getExam/:id", authenticate, authorize("GET_Exam"), async (req, res)
   }
 });
 
+
 router.delete("/delete/:id", authenticate, authorize("DELETE_Exam"), async (req, res) => {
   try {
     const id = Number(req.params.id);
-    if(!id)
-    {
+    if (!id) {
       return res.status(400).send("Exam id required")
     }
     const existingExam = await Exam.findOneBy({ id });
@@ -102,14 +112,14 @@ router.delete("/delete/:id", authenticate, authorize("DELETE_Exam"), async (req,
   }
 });
 
+
 router.post("/start", authenticate, authorize("Take_Exam"), async (req, res) => {
   try {
     console.log("from start");
     const token = req.cookies.token;
     const examId = req.body.examId;
     const password = req.body.password;
-    if(!examId || !password)
-    {
+    if (!examId || !password) {
       return res.status(400).send("Exam id and password required")
     }
 
@@ -129,7 +139,10 @@ router.post("/start", authenticate, authorize("Take_Exam"), async (req, res) => 
     const shuffledOrder = exam.questions.map((question) => question.id);
     shuffleArray(shuffledOrder); // Shuffle the order
     const shuffledOrderJSON = JSON.stringify(shuffledOrder);
-
+    
+    const questionsInShuffledOrder = shuffledOrder.map((questionIndex) => {
+      return exam.questions.find((question) => question.id === questionIndex);
+    }); 
     console.log({ questions: shuffledOrder });
     console.log({ questions: shuffledOrderJSON });
 
@@ -221,22 +234,21 @@ router.post("/start", authenticate, authorize("Take_Exam"), async (req, res) => 
 
     res
       .status(200)
-      .send("Exam started successfully. Be careful when submitting answers.");
+      .json({msg:"Exam started successfully. Be careful when submitting answers.",
+          questions:questionsInShuffledOrder
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred while starting the exam.");
   }
 });
 
-router.post("/submit", authenticate, authorize("Take_Exam"), async (req, res) => {
+
+router.post("/submit", async (req, res) => {
   try {
     console.log("from submit ");
     const token = req.cookies.token;
     const { submittedAnswers } = req.body;
-    if(!submittedAnswers)
-    {
-      return res.status(400).send("submittedAnswers required")
-    }
     const decoded = jwt.decode(token, { json: true });
 
     if (decoded) {
@@ -306,62 +318,26 @@ router.post("/submit", authenticate, authorize("Take_Exam"), async (req, res) =>
             examAnswers.push(exam_answers);
           }
 
-          let totalScore = 0;
-
-          for (let i = 0; i < currentExam.questions.length; i++) {
-            const questionIndex = shuffledQuestionOrder[i];
-            const shuffledAnswer = submittedAnswers[i];
-
-            // Check if currentExam.questions[questionIndex] exists and is an object
-            if (
-              currentExam.questions &&
-              questionIndex >= 0 &&
-              questionIndex <= currentExam.questions.length
-            ) {
-              const question = currentExam.questions[questionIndex - 1];
-
-              if (question) {
-                switch (question.type) {
-                  case "TrueFalse":
-                    if (question.answer === shuffledAnswer) {
-                      totalScore += question.weight;
-                    }
-                    break;
-                  case "MultipleChoice":
-                    if (question.correctAnswer === shuffledAnswer) {
-                      totalScore += question.weight;
-                    }
-                    break;
-                  case "FillInTheBlank":
-                    if (question.blankAnswer === shuffledAnswer) {
-                      totalScore += question.weight;
-                    }
-                    break;
-                  default:
-                    // Handle unknown question types
-                    console.error("Unknown question type:", question.type);
-                    break;
-                }
-              } else {
-                console.error(
-                  "Question is undefined for index:",
-                  questionIndex
-                );
-              }
-            } else {
-              console.error("Invalid question index:", questionIndex);
-            }
-          }
-
-          lastResponse.totalScore = totalScore;
           lastResponse.exam_answers = examAnswers;
-          lastResponse.status = "done";
           await lastResponse.save();
 
-          res.status(200).json({
-            msg: "The exam has finished, and the response has been submitted. Best of luck!",
-            totalScore: totalScore,
+          const sendMessageCommand = new SendMessageCommand({
+            QueueUrl: 'https://sqs.us-east-1.amazonaws.com/918000663876/exam-submissions-queue',
+            MessageBody: JSON.stringify({
+              lastResponseId: lastResponse.id,
+              submittedAnswers: submittedAnswers,
+              userId: userId
+            }),
           });
+
+          try {
+            await sqsClient.send(sendMessageCommand);
+            res.status(200).json({ message: 'Exam submission in progress.' });
+          } catch (error) {
+            console.error('Error sending message to SQS:', error);
+            res.status(500).json({ message: 'Error submitting the exam.' });
+          }
+
         } else {
           return res.status(500).send("No valid exam found for the user.");
         }
@@ -380,5 +356,49 @@ router.post("/submit", authenticate, authorize("Take_Exam"), async (req, res) =>
       .json({ message: "An error occurred while submitting the exam." });
   }
 });
+
+
+router.get('/getMark', async (req, res) => {
+  try {
+
+    const token = req.cookies.token;
+    const examId = req.body.examId;
+
+    const decoded = jwt.decode(token, { json: true });
+    if (decoded) {
+
+      const userId = decoded.userId;
+      console.log(userId);
+      const exam = await Exam.findOneBy({ id: examId });
+
+      const response = await Response.findOne({
+        relations: {
+          user: true,
+          exam: true,
+        },
+        where: {
+          user: {
+            id: userId,
+          },
+          exam: {
+            id: examId,
+          }
+        }
+      });
+
+      console.log(response);
+
+      if (!response) {
+        res.status(404).send("there is no respones wiht this exam");
+      }
+
+      res.status(200).send(`Your totalScore is ${response?.totalScore}/${exam?.score}`);
+
+    }
+  } catch (error) {
+    res.status(500).send("something is went wrong ");
+    console.error(error);
+  }
+})
 
 export default router;

@@ -46,7 +46,7 @@ export class Question extends BaseEntity {
 
   // Fields specific to the Fill in the Blank question type
   @Column({ type: 'json', nullable: true })
-  blanks: string; // Array of blank placeholders
+  blank: string; // Array of blank placeholders
 
   @Column({ type: 'json', nullable: true })
   blankAnswer: string ; // Array of correct answers

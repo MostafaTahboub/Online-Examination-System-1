@@ -5,10 +5,9 @@ import baseLogger from '../../log.js';
 
 function validateCreateExam(req: Request, res: Response, next: NextFunction) {
   // should add exam answers in validation here 
-  const { title, score, startTime, duration, questionsIds } = req.body;
+  const { title, startTime, duration, questionsIds } = req.body;
 
   const timezone = 'Asia/Riyadh';
-  // const StartTime= moment.tz(startTime,timezone);
 
   if (!title) {
     baseLogger.error(`Can't create exam without title`);
@@ -35,11 +34,7 @@ function validateCreateExam(req: Request, res: Response, next: NextFunction) {
       });
     }
   }
-  if (!score) {
-    baseLogger.error(`Can't create exam without score`);
-    return res.status(400).send("exam must have score ");
-  }
-
+ 
   if (!questionsIds) {
     return res
       .status(400)

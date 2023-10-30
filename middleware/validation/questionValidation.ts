@@ -4,7 +4,7 @@ import baseLogger from "../../log.js";
 
 async function validateCreateQuestion(req:Request,res:Response,next:NextFunction){
 
-  const values = ["text", "answer", "type", "weight"];
+  const values = ["text","weight","type","subjectId"];
   const question = req.body;
   const errorList = [];
   // const errorList = values.map(key => !question[key] && `${key} is Required!`).filter(Boolean);

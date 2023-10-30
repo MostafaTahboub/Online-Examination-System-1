@@ -1,20 +1,21 @@
-import "reflect-metadata";
-import express, { urlencoded } from "express";
-import "./config.js";
-import dataSource from "./DB/dataSource.js";
-import createAdminUser from "./controllers/admin.js";
-import homeRouter from "./routes/home.js";
-import questionRouter from "./routes/question.js";
-import subjectRouter from "./routes/subject.js";
-import examRouter from "./routes/exam.js";
-import permissionRouter from "./routes/permission.js";
-import roleRouter from "./routes/role.js";
-import responseRouter from "./routes/response.js";
-import enrollmentRouter from "./routes/enrollment.js";
-import baseLogger from "./log.js";
 import cookieParser from "cookie-parser";
+import express from "express";
+import "reflect-metadata";
+import dataSource from "./DB/dataSource.js";
+import "./config.js";
+import createAdminUser from "./controllers/admin.js";
+import baseLogger from "./log.js";
 import analytics from "./routes/analytics.js";
+import consumer from './routes/consumer.js';
+import enrollmentRouter from "./routes/enrollment.js";
+import examRouter from "./routes/exam.js";
+import homeRouter from "./routes/home.js";
+import permissionRouter from "./routes/permission.js";
+import questionRouter from "./routes/question.js";
 import reset from './routes/resetPwd.js';
+import responseRouter from "./routes/response.js";
+import roleRouter from "./routes/role.js";
+import subjectRouter from "./routes/subject.js";
 
 export const app = express();
 
@@ -44,11 +45,11 @@ app.get("/", (req, res) => {
 app.listen(PORT, async () => {
   console.log(`App is lestining to PORT.. : ` + PORT);
   baseLogger.info(`App is lestining to PORT : ${PORT}`);
-  
+
   dataSource
-    .initialize()
-    .then(() => {
-      // createAdminUser();
+  .initialize()    
+  .then(() => {      
+      createAdminUser();      
       baseLogger.info("connected to database :)");
       console.log("connected to database :)");
     })
@@ -56,4 +57,6 @@ app.listen(PORT, async () => {
       baseLogger.error(`failed to connect connect to db !! ${err}`);
       console.log("failed to connect to db !! " + err);
     });
+    consumer.start()
 });
+

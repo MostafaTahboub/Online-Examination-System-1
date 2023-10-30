@@ -36,16 +36,18 @@ jobs:
     - name: configure docker host
       uses: khaledez/configure-docker-host@v1
       with:
-        host: online-lb-1898523670.us-east-1.elb.amazonaws.com
+        host: internal-online-lb-884022182.us-east-1.elb.amazonaws.com
         user: github
         ssh-private-key: ${{secrets.DEPLOYMENT_KEY}}
 
     - name: deploy
-      run: docker compose -f docker-compose-prod.yml up -d
+      run: |
+        ssh github@internal-online-lb-884022182.us-east-1.elb.amazonaws.com"docker compose -f docker-compose-prod.yml up -d"
       env: 
         DB_PASSWORD: ${{secrets.DB_PASSWORD}}
         GIT_VERSION: ${{steps.image_version.outputs.gitsha}}
 
     - name: print logs
       if: always()
-      run: docker compose logs
+      run: | 
+        ssh github@internal-online-lb-884022182.us-east-1.elb.amazonaws.com "docker compose logs"
