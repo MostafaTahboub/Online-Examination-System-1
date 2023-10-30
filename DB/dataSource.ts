@@ -9,8 +9,6 @@ import { Enrollment } from "./Entities/Enrollment.js";
 import { Exam_answers } from "./Entities/Exam_answers.js";
 import { Response } from "./Entities/Response.js";
 import { CreateAdmin1698221813286 } from "../migration/1698221813286-CreateAdmin.js";
-import { CreatePermissions1698265178685 } from "../migration/1698265178685-CreatePermissions.js";
-import { CreateRoles1698265168781 } from "../migration/1698265168781-CreateRoles.js";
 
 const dataSource = new DataSource({
   type: "mysql",
@@ -30,7 +28,7 @@ const dataSource = new DataSource({
     Exam_answers,
     Response,
   ],
-  migrations: [CreatePermissions1698265178685, CreateRoles1698265168781, CreateAdmin1698221813286],
+  migrations: [CreateAdmin1698221813286],
   migrationsRun: true,
   synchronize: true,
   logging: false,

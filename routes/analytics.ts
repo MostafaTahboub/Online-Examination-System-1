@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import { authenticate } from "../middleware/auth/authenticate.js";
 import jwt from "jsonwebtoken";
 import { User } from "../DB/Entities/User.js";
@@ -9,25 +9,39 @@ import baseLogger from "../log.js";
 import { EqualOperator } from "typeorm";
 const router = express.Router();
 
-router.get("/by_user", authenticate, authorize("GET_User_Analytics"), async (req, res) => {
+router.get("/by_user",  authenticate, authorize("GET_User_Analytics"), async (req, res) => {
   try {
-    const token = req.cookies["token"];
+    const token = req.cookies["token"];   
     const decode = jwt.decode(token, { json: true });
     let sum: number = 0;
+    let weight: number = 0;
     if (decode !== null) {
-      let user = await User.findOneBy({ id: decode.userID });
+      let user = await User.findOneBy({ email: decode.email });
+
       if (user !== null) {
-        if (user.responses !== null) {
-          let responses: Response[] = user?.responses;
+        if (user.exams !== undefined) {
+          var responses: Response[] = [];
+          for (let exam of user.exams) {
+            for(let res of exam.responses)
+           {responses = [...responses, res]}
+          }
+          // let responses: Response[] = user?.responses;
           for (let i = 0; i < responses.length; i++) {
             sum += responses[i].totalScore;
+            weight += responses[i].exam.score;
           }
           res.status(200)
             .send(
               `Hi ${user.name} your exams rate is: ${sum / responses.length}`
             );
-            baseLogger.info(`The user: ${user.name} has viewed his exam rate by ${decode.fullName} which is: ${sum/responses.length}`)
+            baseLogger.info(`The user: ${user.name} has viewed his exam rate by ${decode.fullName} which is: ${sum/weight}`)
         }
+        else {
+          return res.status(404).send("No responses found")
+        }
+      }
+      else {
+        return res.status(404).send("The user not found");
       }
     }
   } catch (error) {
@@ -55,19 +69,17 @@ router.get(
       }
       else{
           const exam = await Exam.findOneBy({ id: exam_id });
-    
+          let x: Response = new Response;
           if (exam !== null) {
-            let [responses, total] = await Response.findAndCount({
-                //need to fix
-              where : { exam: new EqualOperator(exam)},
-            });
-            let avg: number = 0;
-    
-            if (total > 0) {
-              for (let response of responses) {
-                avg += response.totalScore;
+            let sum: number = 0;
+            let score: number = 0;
+            let e_response: Response[] = exam.responses;
+            if (e_response.length > 0) {
+              for (let response of e_response) {
+                sum += response.totalScore;
+                score += response.exam.score;
               }
-              avg = avg / total;
+              let avg: number = sum / score;
               baseLogger.info(`The user: ${decode.fullName} has viewed the exam rate which is: ${avg}`)
               return res
                 .status(200)

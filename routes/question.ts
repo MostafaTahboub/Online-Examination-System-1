@@ -9,9 +9,9 @@ import baseLogger from "../log.js";
 
 var router = express.Router();
 
-router.post('/new', authenticate, authorize("POST_Question"), validateCreateQuestion, async (req, res) => {
 
-router.post('/new', authenticate, validateCreateQuestion, async (req, res) => {
+
+router.post('/new', authenticate, authorize("POST_Question"), validateCreateQuestion, async (req, res) => {
 
     const questionData = req.body;
     const question = new Question();
@@ -93,14 +93,10 @@ router.get('/all', authenticate, authorize("GET_Question"), (req, res) => {
 });
 
  
+
+
+
 router.delete('/delete/:id', authenticate, authorize("DELETE_Question"), async (req, res) => {
-router.get('/all', (req, res) => {
-
-    getAllQuestions(req, res);
-});
-
-
-router.delete('/delete/:id', async (req, res) => {
     try {
         const id = Number(req.params.id);
         const existingQuestion = await Question.findOneBy({ id: id });
@@ -128,4 +124,4 @@ router.delete('/delete/:id', async (req, res) => {
 });
 
 
-export default router;
+export default router

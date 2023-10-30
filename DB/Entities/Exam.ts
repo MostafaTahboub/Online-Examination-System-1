@@ -45,6 +45,6 @@ export class Exam extends BaseEntity {
   answers: Relation<Exam_answers[]>;
 
   @OneToMany(() => Response, (response) => response.exam)
-  responses: Relation<Exam[]>;
+  responses: Relation<Response[]>;
     
 }     
