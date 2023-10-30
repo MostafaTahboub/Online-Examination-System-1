@@ -65,9 +65,6 @@ jobs:
           user: github
           ssh-private-key: ${{ secrets.DEPLOYMENT_KEY }}
 
-      - name: Print ec2_ips
-        run: echo ec2_ips: ${{ needs.build.outputs.ec2_ips }}   
-      
       - name: Login to Registry
         uses: docker/login-action@v3
         with:
