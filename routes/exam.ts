@@ -23,8 +23,8 @@ import AWS from "aws-sdk";
 // Configure AWS SDK with your credentials and region
 AWS.config.update({
   region: 'us-east-1',
-  accessKeyId: process.env.ACESS_KEY_ID,
-  secretAccessKey: process.env.SECRET_KEY_ID
+  accessKeyId: process.env.ACCESS_KEY,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY
 });
 
 var router = express.Router();

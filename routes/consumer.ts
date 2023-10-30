@@ -1,6 +1,6 @@
 import { Consumer } from 'sqs-consumer';
 import { Exam_answers } from '../DB/Entities/Exam_answers.js';
-import { DeleteMessageCommand, sqsClient } from '../aws-config.js'; // Adjust the path
+import { DeleteMessageCommand, sqsClient } from '../aws-config.js'; 
 import { Response } from '../DB/Entities/Response.js';
 import { Exam } from '../DB/Entities/Exam.js';
 

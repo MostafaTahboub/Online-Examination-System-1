@@ -1,11 +1,13 @@
 import { SQSClient, SendMessageCommand, DeleteMessageCommand } from '@aws-sdk/client-sqs';
+import dotenv from 'dotenv'
+dotenv.config();
 
 
 const sqsClient = new SQSClient({
-    region: 'us-east-1',
+    region:process.env.AWS_REGION,
     credentials: {
-      accessKeyId:process.env.ACESS_KEY_ID ||'',
-      secretAccessKey:process.env.SECRET_KEY_ID ||'',
+      accessKeyId:process.env.ACCESS_KEY ||'',
+      secretAccessKey:process.env.SECRET_ACCESS_KEY ||'',
     },
   });
   

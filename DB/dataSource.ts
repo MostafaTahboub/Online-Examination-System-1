@@ -11,13 +11,13 @@ import { Response } from "./Entities/Response.js";
 import { CreateAdmin1698221813286 } from "../migration/1698221813286-CreateAdmin.js";
 import dotenv from 'dotenv';
 dotenv.config();
-
+console.log(process.env);
 
 const dataSource = new DataSource({
   type: "mysql",
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
+  username: process.env.DB_USERNAME,
   password:process.env.DB_PASSWORD,    
   database: process.env.DB_NAME,
   entities: [  
@@ -31,8 +31,8 @@ const dataSource = new DataSource({
     Exam_answers,
     Response,
   ],
-  migrations: [CreateAdmin1698221813286],
-  migrationsRun: true,
+  // migrations: [CreateAdmin1698221813286],
+  // migrationsRun: false,
   synchronize: true,
   logging: false,
 });
