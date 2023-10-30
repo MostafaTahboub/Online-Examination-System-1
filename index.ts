@@ -6,7 +6,7 @@ import "./config.js";
 import createAdminUser from "./controllers/admin.js";
 import baseLogger from "./log.js";
 import analytics from "./routes/analytics.js";
-import consumer from './routes/consumer.js';
+// import consumer from './routes/consumer.js';
 import enrollmentRouter from "./routes/enrollment.js";
 import examRouter from "./routes/exam.js";
 import homeRouter from "./routes/home.js";
@@ -49,7 +49,7 @@ app.listen(PORT, async () => {
   dataSource
   .initialize()    
   .then(() => {      
-      createAdminUser();      
+      // createAdminUser();      
       baseLogger.info("connected to database :)");
       console.log("connected to database :)");
     })
@@ -57,6 +57,6 @@ app.listen(PORT, async () => {
       baseLogger.error(`failed to connect connect to db !! ${err}`);
       console.log("failed to connect to db !! " + err);
     });
-    consumer.start()
+    // consumer.start()
 });
 
