@@ -69,7 +69,7 @@ router.get(
       }
       else{
           const exam = await Exam.findOneBy({ id: exam_id });
-          let x: Response = new Response;
+          // let x: Response = new Response;
           if (exam !== null) {
             let sum: number = 0;
             let score: number = 0;
