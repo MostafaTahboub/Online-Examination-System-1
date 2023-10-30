@@ -61,8 +61,10 @@ jobs:
       - name: Configure Docker host
         uses: khaledez/configure-docker-host@v1
         with:
-         host: ${{ needs.build.outputs.ec2_ips }}
-
+          host: ${{ needs.build.outputs.ec2_ips }}
+          user: github
+          ssh-private-key: ${{ secrets.DEPLOYMENT_KEY }}
+      
       - name: Login to Registry
         uses: docker/login-action@v3
         with:
