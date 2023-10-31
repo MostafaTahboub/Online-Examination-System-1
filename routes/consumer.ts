@@ -88,7 +88,7 @@ const queueConsumer = Consumer.create({
         QueueUrl: 'https://sqs.us-east-1.amazonaws.com/918000663876/exam-submissions-queue',
         ReceiptHandle: message.ReceiptHandle,
       }));
-    }
+    }     
     } catch (error) {
       console.error('Error processing message:', error);
     }

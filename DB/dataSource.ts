@@ -11,7 +11,7 @@ import { Response } from "./Entities/Response.js";
 import { CreateAdmin1698221813286 } from "../migration/1698221813286-CreateAdmin.js";
 import dotenv from 'dotenv';
 dotenv.config();
-console.log(process.env);
+// console.log(process.env);
 
 const dataSource = new DataSource({
   type: "mysql",

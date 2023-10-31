@@ -53,7 +53,7 @@ jobs:
 
     strategy:
       matrix:
-        ip: ${{ fromJson(needs.build.steps.get_instance_ips) }}
+        ip: ${{ fromJson(needs.build.outputs.ec2_ips) }}
 
     steps:
       - uses: actions/checkout@v3
