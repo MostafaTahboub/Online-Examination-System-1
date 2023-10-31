@@ -58,10 +58,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set EC2 IP address
+        id: set_ec2_ip
+        run: echo "::set-output name=ec2_ip::${{ needs.build.outputs.ec2_ips[0] }}"
+      
       - name: Configure Docker host
         uses: khaledez/configure-docker-host@v1
         with:
-          host: ${{ needs.build.outputs.ec2_ips }}
+          host: ${{ steps.set_ec2_ip.outputs.ec2_ip }}
           user: github
           ssh-private-key: ${{ secrets.DEPLOYMENT_KEY }}
 
