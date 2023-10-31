@@ -47,7 +47,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
       - name: Echo EC2 IPs
         id: ec2_ips
-        run: echo "$name=$ec2_ips::$(aws ec2 describe-instances --filters 'Name=tag:aws:autoscaling:groupName,Values=online-exam-asg' --query 'Reservations[*].Instances[*].PublicIpAddress' --output json)"
+        run: echo "ec2_ips::$(aws ec2 describe-instances --filters 'Name=tag:aws:autoscaling:groupName,Values=online-exam-asg' --query 'Reservations[*].Instances[*].PublicIpAddress' --output json)"
          
 
   deploy:
