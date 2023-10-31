@@ -2,11 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
@@ -17,20 +15,20 @@ jobs:
 
     outputs:
       ec2_ips: ${{ steps.get_instance_ips.outputs.ips }}
+      image_version: ${{ steps.image_version.outputs.gitsha }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set image version (tag)
         id: image_version
-        run: echo "gitsha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "gitsha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Login to Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: github
+          username: mostafatahboub
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build the Docker image
@@ -42,9 +40,8 @@ jobs:
       - name: Get EC2 instance IPs
         id: get_instance_ips
         run: |
-          instances=$(aws ec2 describe-instances --filters "Name=tag:aws:autoscaling:groupName,Values=online-exam-asg" \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' --output json)
-          echo "::set-output name=ips::$instances"
+          instances=$(aws ec2 describe-instances --filters "Name=tag:aws:autoscaling:groupName,Values=online-exam-asg" --query 'Reservations[*].Instances[*].PublicIpAddress' --output json | jq -r '.[]')
+          echo "ips=$instances" >> $GITHUB_ENV
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -54,18 +51,17 @@ jobs:
     needs: ['build']
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    strategy:
+      matrix:
+        ip: ${{ fromJson(needs.build.outputs.ec2_ips) }}
 
-      - name: Set EC2 IP address
-        id: set_ec2_ip
-        run: echo "::set-output name=ec2_ip::${{ needs.build.outputs.ec2_ips[0] }}"
-      
+    steps:
+      - uses: actions/checkout@v3
+
       - name: Configure Docker host
         uses: khaledez/configure-docker-host@v1
         with:
-          host: ${{ steps.set_ec2_ip.outputs.ec2_ip }}
+          host: ${{ matrix.ip }}
           user: github
           ssh-private-key: ${{ secrets.DEPLOYMENT_KEY }}
 
@@ -73,14 +69,14 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: github
+          username: mostafatahboub
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy
         run: docker compose -f docker-compose-prod.yml up -d
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GIT_VERSION: ${{ steps.image_version.outputs.gitsha }}
+          GIT_VERSION: ${{ needs.build.outputs.image_version }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
