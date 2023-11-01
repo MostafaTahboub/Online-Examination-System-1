@@ -32,7 +32,7 @@ services:
       - DB_NAME=$DB_NAME
     ports:
       - "3000:80"
-    depends_on:
+    depends_on:      
       mysql:
         condition: service_healthy
 

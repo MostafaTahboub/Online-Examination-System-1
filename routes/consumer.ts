@@ -96,7 +96,7 @@ const queueConsumer = Consumer.create({
         lastResponse.status = "done";
         await lastResponse.save();
 
-        sendEmail(`${user?.email}`, "your mark", `Hi ${user?.username} your mark for the ${title} is : ${totalScore}`);
+        sendEmail(`${user?.email}`, "your mark", `Hi ${user?.username} your mark for the ${title} exam is : ${totalScore}`);
 
         await sqsClient.send(new DeleteMessageCommand({
           QueueUrl: 'https://sqs.us-east-1.amazonaws.com/918000663876/exam-submissions-queue',
