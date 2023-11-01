@@ -9,40 +9,50 @@ import baseLogger from "../log.js";
 import { EqualOperator } from "typeorm";
 const router = express.Router();
 
-router.get("/by_user",  authenticate, authorize("GET_User_Analytics"), async (req, res) => {
+router.get("/by_user", authenticate, authorize("GET_User_Analytics"), async (req, res) => {
   try {
-    const token = req.cookies["token"];   
+    console.log("from analyt");
+    const token = req.cookies.token;
     const decode = jwt.decode(token, { json: true });
     let sum: number = 0;
     let weight: number = 0;
+    console.log(decode);
     if (decode !== null) {
+      console.log("from user");
+      let user = await User.findOneBy({ id: decode.userId });
 
-      let user = await User.findOneBy({ email: decode.email });
-      if (user !== null) {
-        if (user.exams !== undefined) {
-          var responses: Response[] = [];
-          for (let exam of user.exams) {
-            for(let res of exam.responses)
-           {responses = [...responses, res]}
-          }
-          // let responses: Response[] = user?.responses;
+      const exams = await Exam.find({
+        relations: {
+          users: true,
+          responses: true
+        },
+        where: {
+          users: decode.userId
+        }
+      });
+
+      if (exams) {
+        for (let exam of exams) {
+          const responses = exam.responses;
+          console.log(responses);
           for (let i = 0; i < responses.length; i++) {
             sum += responses[i].totalScore;
-            weight += responses[i].exam.score;
+            weight += exam.score;
           }
-          res.status(200)
-            .send(
-              `Hi ${user.name} your exams rate is: ${sum / responses?.length}`
-            );
-            baseLogger.info(`The user: ${user.name} has viewed his exam rate by ${decode.fullName} which is: ${sum/weight}`)
         }
-        else {
-          return res.status(404).send("No responses found")
-        }
+
+        res.status(200)
+          .send(
+            `Hi ${user?.name} your exams rate is: ${sum /weight}`
+          );
+        baseLogger.info(`The user: ${user?.name} has viewed his exam rate by ${decode.fullName} which is: ${sum / weight}`)
       }
       else {
-        return res.status(404).send("The user not found");
+        return res.status(404).send("there is no exams for this user ");
       }
+    }
+    else {
+      return res.status(404).send("no user found ");
     }
   } catch (error) {
     baseLogger.error(`Error while calculate the user exam rate: ${error}`);
@@ -50,24 +60,26 @@ router.get("/by_user",  authenticate, authorize("GET_User_Analytics"), async (re
   }
 });
 
+
+
+
 router.get(
   "/By_exam",
   authenticate,
   authorize("GET_Exam_Analytics"),
   async (req, res) => {
     try {
-        const token = req.cookies["token"];
-        const decode = jwt.decode(token, { json: true });
-        if(decode === null)
+      const token = req.cookies["token"];
+      const decode = jwt.decode(token, { json: true });
+      if (decode === null)
         return res.status(401).send('Token not valid');
-        else
-      {
+      else {
         const exam_id = Number(req.body.examID);
 
-      if (!exam_id) {
-       return res.status(400).send("Enter the exam id");
-      }
-      else{
+        if (!exam_id) {
+          return res.status(400).send("Enter the exam id");
+        }
+        else {
           const exam = await Exam.findOneBy({ id: exam_id });
           // let x: Response = new Response;
           if (exam !== null) {
@@ -85,20 +97,21 @@ router.get(
                 .status(200)
                 .send(`The average score in this exam is :${avg}`);
             } else {
-                baseLogger.info(`No Responses found for this exam: ${exam_id}`);
+              baseLogger.info(`No Responses found for this exam: ${exam_id}`);
               return res.status(404).send("No Responses Found");
             }
           } else {
             baseLogger.info(`Ther are no exam with id: ${exam_id}`);
             return res.status(404).send("There are no exam with this id");
           }
-        } 
-    }
-    } catch (error) {
-      
-      baseLogger.error(`Error while calculating the exam rate: ${error}`)}
-       res.status(500).send("something went wrong ");             
+        }
       }
+    } catch (error) {
+
+      baseLogger.error(`Error while calculating the exam rate: ${error}`)
+    }
+    res.status(500).send("something went wrong ");
+  }
 );
 
 export default router;

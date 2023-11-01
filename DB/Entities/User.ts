@@ -19,6 +19,9 @@ import { Response } from "./Response.js";
 
 @Entity('user')
 export class User extends BaseEntity {
+  static findByPk(userId: any, arg1: { include: { model: typeof Exam; as: string; include: typeof Response; }; }) {
+    throw new Error("Method not implemented.");
+  }
 
   @PrimaryGeneratedColumn("increment")
   id: number;

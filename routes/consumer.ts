@@ -1,9 +1,19 @@
 import { Consumer } from 'sqs-consumer';
 import { Exam_answers } from '../DB/Entities/Exam_answers.js';
-import { DeleteMessageCommand, sqsClient } from '../aws-config.js'; 
+import { DeleteMessageCommand, sqsClient } from '../aws-config.js';
 import { Response } from '../DB/Entities/Response.js';
 import { Exam } from '../DB/Entities/Exam.js';
+import dotenv from 'dotenv';
+import sendEmail from "../controllers/SES.js";
+import { User } from '../DB/Entities/User.js';
 
+dotenv.config();
+
+const SES_Config = {
+  accessKeyId: process.env.ACCESS_KEY,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+};
 
 const queueConsumer = Consumer.create({
   sqs: sqsClient,
@@ -15,11 +25,13 @@ const queueConsumer = Consumer.create({
 
       const { lastResponseId, submittedAnswers, userId } = messageBody;
       console.log(lastResponseId);
-      const lastResponse = await Response.findOneBy({id:lastResponseId});
+      const lastResponse = await Response.findOneBy({ id: lastResponseId });
 
       console.log(lastResponse);
 
       const exam = lastResponse?.exam;
+      const title = await exam?.title;
+
       const currentExam = await Exam.findOne({
         where: {
           id: exam?.id,
@@ -30,11 +42,11 @@ const queueConsumer = Consumer.create({
       console.log(currentExam);
       console.log(userId);
       console.log(lastResponse);
-    
-      if (lastResponse && currentExam){
-      const shuffledQuestionOrder = lastResponse.shuffledQuestionOrder;
-      console.log(shuffledQuestionOrder);
-      let totalScore = 0;
+      const user = await User.findOneBy({ id: userId });
+      if (lastResponse && currentExam) {
+        const shuffledQuestionOrder = lastResponse.shuffledQuestionOrder;
+        console.log(shuffledQuestionOrder);
+        let totalScore = 0;
 
         for (let i = 0; i < currentExam.questions.length; i++) {
           const questionIndex = shuffledQuestionOrder[i];
@@ -79,16 +91,18 @@ const queueConsumer = Consumer.create({
             console.error("Invalid question index:", questionIndex);
           }
         }
-      console.log("from saving");
-      lastResponse.totalScore = totalScore;
-      lastResponse.status = "done";
-      await lastResponse.save();
-      
-      await sqsClient.send(new DeleteMessageCommand({
-        QueueUrl: 'https://sqs.us-east-1.amazonaws.com/918000663876/exam-submissions-queue',
-        ReceiptHandle: message.ReceiptHandle,
-      }));
-    }     
+        console.log("from saving");
+        lastResponse.totalScore = totalScore;
+        lastResponse.status = "done";
+        await lastResponse.save();
+
+        sendEmail(`${user?.email}`, "your mark", `Hi ${user?.username} your mark for the ${title} is : ${totalScore}`);
+
+        await sqsClient.send(new DeleteMessageCommand({
+          QueueUrl: 'https://sqs.us-east-1.amazonaws.com/918000663876/exam-submissions-queue',
+          ReceiptHandle: message.ReceiptHandle,
+        }));
+      }
     } catch (error) {
       console.error('Error processing message:', error);
     }

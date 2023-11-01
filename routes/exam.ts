@@ -8,6 +8,7 @@ import {
   fetchQuestionsForExam,
 } from "../controllers/exam.js";
 import { validateCreateExam } from "../middleware/validation/examValidation.js";
+import { Question } from "../DB/Entities/Question.js";
 import { Exam } from "../DB/Entities/Exam.js";
 import { authenticate } from "../middleware/auth/authenticate.js";
 import { authorize } from "../middleware/auth/authorize.js";
@@ -139,11 +140,30 @@ router.post("/start", authenticate, authorize("Take_Exam"), async (req, res) => 
     const shuffledOrder = exam.questions.map((question) => question.id);
     shuffleArray(shuffledOrder); // Shuffle the order
     const shuffledOrderJSON = JSON.stringify(shuffledOrder);
-    
+
     const questionsInShuffledOrder = shuffledOrder.map((questionIndex) => {
       return exam.questions.find((question) => question.id === questionIndex);
-    }); 
-    console.log({ questions: shuffledOrder });
+    });
+
+
+    const simplifiedQuestions = questionsInShuffledOrder.map((question) => {
+      const id = question?.id;
+      const text = question?.text;
+      const weight = question?.weight;
+      const type = question?.type;
+      const options = question?.options;
+
+      return {
+        id,
+        text,
+        weight,
+        type,
+        options,
+      };
+    });
+
+
+    console.log({ questions: questionsInShuffledOrder });
     console.log({ questions: shuffledOrderJSON });
 
     const comparingPassword = exam.password === password;
@@ -234,9 +254,10 @@ router.post("/start", authenticate, authorize("Take_Exam"), async (req, res) => 
 
     res
       .status(200)
-      .json({msg:"Exam started successfully. Be careful when submitting answers.",
-          questions:questionsInShuffledOrder
-    });
+      .json({
+        msg: "Exam started successfully. Be careful when submitting answers.",
+        questions: simplifiedQuestions
+      });
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred while starting the exam.");

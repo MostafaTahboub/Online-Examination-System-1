@@ -34,7 +34,7 @@ export class Question extends BaseEntity {
   @Column()
   type:"TrueFalse"|"MultipleChoice"|"FillInTheBlank";
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type:'simple-array', nullable: true })
   options: string[]; // Array of multiple choice options
 
   // Fields specific to the True/False question type

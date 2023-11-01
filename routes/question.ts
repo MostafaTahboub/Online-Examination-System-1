@@ -9,7 +9,7 @@ import baseLogger from "../log.js";
 
 var router = express.Router();
 
-router.post('/new', authenticate,authorize("POST_Question"),validateCreateQuestion, async (req, res) => {
+router.post('/new', authenticate, authorize("POST_Question"), validateCreateQuestion, async (req, res) => {
 
     const questionData = req.body;
     const question = new Question();
@@ -58,40 +58,40 @@ router.put('/edit', authenticate, authorize("PUT_Question"), validateCreateQuest
 });
 
 
-router.get('/get/:id',authenticate, authorize("GET_Question"), async (req, res) => {
-    if(req.body.id)
-    {const id = Number(req.params.id);
-    const existingQuestion = await Question.findOneBy({id:id});
-    
-    if (!existingQuestion) {
-        baseLogger.info(`Trying to retrive a question that dosn't exist`)
-        return res.status(404).send("question not found ");
-    }
+router.get('/get/:id', authenticate, authorize("GET_Question"), async (req, res) => {
 
+
+
+    try {
+
+        const id = Number(req.params.id);
+        const existingQuestion = await Question.findOneBy({ id: id });
 
         if (!existingQuestion) {
             baseLogger.info(`Trying to retrive a question that dosn't exist`)
             return res.status(404).send("question not found ");
         }
-
         else {
             baseLogger.info(`The qustion with id: ${existingQuestion.id} has been retrived`);
             res.status(200).json({ question: existingQuestion });
         }
+
+    } catch (error) {
+          console.error(error);
+          res.status(500).send("something went wrong");
     }
-    else {
-        return res.status(400).send("Enter the question id");
-    }
+
+
 });
 
 
 router.get('/all', authenticate, authorize("GET_Question"), (req, res) => {
-    
+
     getAllQuestions(req, res);
 });
 
- 
-router.delete('/delete/:id',authenticate, authorize("DELETE_Question"), async (req, res) => {
+
+router.delete('/delete/:id', authenticate, authorize("DELETE_Question"), async (req, res) => {
     try {
         const id = Number(req.params.id);
         const existingQuestion = await Question.findOneBy({ id: id });

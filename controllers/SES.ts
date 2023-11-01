@@ -14,7 +14,7 @@ const sendEmail = async (recepantEmail: string, name: string, data: string) => {
   let params = {
     Source: process.env.AWS_SES_SENDER || "",
     Destination: {
-      ToAddresses: [`${recepantEmail}`, "201160@ppu.edu.ps"],
+      ToAddresses: [`${recepantEmail}`],
     },
     ReplyToAddresses: [],
     Message: {

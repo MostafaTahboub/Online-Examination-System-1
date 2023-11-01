@@ -29,11 +29,11 @@ const dataSource = new DataSource({
     Subject,
     Enrollment,
     Exam_answers,
-    Response,
+    Response,    
   ],
-  // migrations: [CreateAdmin1698221813286],
-  // migrationsRun: false,
-  synchronize: true,
+  migrations: [CreateAdmin1698221813286],
+  migrationsRun:false,  
+  synchronize: true,   
   logging: false,
 });
 
