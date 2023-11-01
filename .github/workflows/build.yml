@@ -39,8 +39,9 @@ jobs:
       - name: Get EC2 instance IPs
         id: get_instance_ips
         run: |
-          aws ec2 describe-instances --filters "Name=tag:aws:autoscaling:groupName,Values=online-exam-asg" --query 'Reservations[*].Instances[*].PublicIpAddress' --output json | jq --compact-output 'flatten'
-    
+          instances=$(aws ec2 describe-instances --filters "Name=tag:aws:autoscaling:groupName,Values=online-exam-asg" --query 'Reservations[*].Instances[*].PublicIpAddress' --output json | jq --compact-output 'flatten')
+          echo "ips=$instances" >> $GITHUB_OUTPUT
+        
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DEBACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DEBSECRET_KEY }}
