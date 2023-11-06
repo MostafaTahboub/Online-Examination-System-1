@@ -6,82 +6,80 @@ import { Exam } from "../DB/Entities/Exam.js";
 import { authorize } from "../middleware/auth/authorize.js";
 import { Response } from "../DB/Entities/Response.js";
 import baseLogger from "../log.js";
-import { EqualOperator } from "typeorm";
+
 const router = express.Router();
 
-router.get("/by_user", authenticate, authorize("GET_User_Analytics"), async (req, res) => {
-  try {
-    console.log("from analyt");
-    const token = req.cookies.token;
-    const decode = jwt.decode(token, { json: true });
-    let sum: number = 0;
-    let weight: number = 0;
-    console.log(decode);
-    if (decode !== null) {
-      console.log("from user");
-      let user = await User.findOneBy({ id: decode.userId });
+router.get(
+  "/user",
+  authenticate,
+  authorize("GET_User_Analytics"),
+  async (req, res) => {
+    try {
+      console.log("from analyt");
+      const token = req.cookies.token;
+      const decode = jwt.decode(token, { json: true });
+      let sum: number = 0;
+      let weight: number = 0;
+      console.log(decode);
+      if (decode !== null) {
+        let user = await User.findOneBy({ id: decode.userId });
 
-      const exams = await Exam.find({
-        relations: {
-          users: true,
-          responses: true
-        },
-        where: {
-          users: decode.userId
-        }
-      });
+        const exams = await Exam.find({
+          relations: {
+            users: true,
+            responses: true,
+          },
+          where: {
+            users: decode.userId,
+          },
+        });
 
-      if (exams) {
-        for (let exam of exams) {
-          const responses = exam.responses;
-          console.log(responses);
-          for (let i = 0; i < responses.length; i++) {
-            sum += responses[i].totalScore;
-            weight += exam.score;
+        if (exams) {
+          for (let exam of exams) {
+            const responses = exam.responses;
+            for (let i = 0; i < responses.length; i++) {
+              sum += responses[i].totalScore;
+              weight += exam.score;
+            }
           }
-        }
 
-        res.status(200)
-          .send(
-            `Hi ${user?.name} your exams rate is: ${sum /weight}`
+          res
+            .status(200)
+            .send(`Hi ${user?.name} your exams rate is: ${sum / weight}`);
+          baseLogger.info(
+            `The user: ${user?.name} has viewed his exam rate by ${
+              decode.fullName
+            } which is: ${sum / weight}`
           );
-        baseLogger.info(`The user: ${user?.name} has viewed his exam rate by ${decode.fullName} which is: ${sum / weight}`)
+        } else {
+          return res.status(404).send("there is no exams for this user ");
+        }
+      } else {
+        return res.status(404).send("no user found ");
       }
-      else {
-        return res.status(404).send("there is no exams for this user ");
-      }
+    } catch (error) {
+      baseLogger.error(`Error while calculate the user exam rate: ${error}`);
+      res.status(500).send("somthing went wrong");
     }
-    else {
-      return res.status(404).send("no user found ");
-    }
-  } catch (error) {
-    baseLogger.error(`Error while calculate the user exam rate: ${error}`);
-    res.status(500).send("somthing went wrong");
   }
-});
-
-
-
+);
 
 router.get(
-  "/By_exam",
+  "/exam",
   authenticate,
   authorize("GET_Exam_Analytics"),
   async (req, res) => {
     try {
       const token = req.cookies["token"];
       const decode = jwt.decode(token, { json: true });
-      if (decode === null)
-        return res.status(401).send('Token not valid');
+      if (decode === null) return res.status(401).send("Token not valid");
       else {
         const exam_id = Number(req.body.examID);
 
         if (!exam_id) {
           return res.status(400).send("Enter the exam id");
-        }
-        else {
+        } else {
           const exam = await Exam.findOneBy({ id: exam_id });
-          // let x: Response = new Response;
           if (exam !== null) {
             let sum: number = 0;
             let score: number = 0;
@@ -92,7 +90,9 @@ router.get(
                 score += response.exam.score;
               }
               let avg: number = sum / score;
-              baseLogger.info(`The user: ${decode.fullName} has viewed the exam rate which is: ${avg}`)
+              baseLogger.info(
+                `The user: ${decode.fullName} has viewed the exam rate which is: ${avg}`
+              );
               return res
                 .status(200)
                 .send(`The average score in this exam is :${avg}`);
@@ -107,8 +107,7 @@ router.get(
         }
       }
     } catch (error) {
-
-      baseLogger.error(`Error while calculating the exam rate: ${error}`)
+      baseLogger.error(`Error while calculating the exam rate: ${error}`);
     }
     res.status(500).send("something went wrong ");
   }

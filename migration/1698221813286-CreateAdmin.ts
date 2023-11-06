@@ -6,7 +6,7 @@ import { Permission } from "../DB/Entities/Permissions.js";
 export class CreateAdmin1698221813286 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const permission = new Permission();
-    permission.name = "admin";
+    permission.name = "Admin";
     await permission.save();
     const a = new Permission();
     a.name = "POST_Subject";

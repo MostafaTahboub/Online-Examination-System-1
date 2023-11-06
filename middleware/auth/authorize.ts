@@ -11,7 +11,7 @@ const authorize = (api: string) => {
     const permissions: Permission[] = res.locals.user.role.permissions || [];
     if (
       permissions.filter((p) => {
-        return p.name === api || p.name === "admin";
+        return p.name === api || p.name === "Admin";
       }).length > 0
     ) {
       next();
