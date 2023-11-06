@@ -1,11 +1,12 @@
-import { Consumer } from 'sqs-consumer';
-import { Exam_answers } from '../DB/Entities/Exam_answers.js';
-import { DeleteMessageCommand, sqsClient } from '../aws-config.js';
-import { Response } from '../DB/Entities/Response.js';
-import { Exam } from '../DB/Entities/Exam.js';
-import dotenv from 'dotenv';
+import { Consumer } from "sqs-consumer";
+import { Exam_answers } from "../DB/Entities/Exam_answers.js";
+import { DeleteMessageCommand, sqsClient } from "../aws-config.js";
+import { Response } from "../DB/Entities/Response.js";
+import { Exam } from "../DB/Entities/Exam.js";
+import dotenv from "dotenv";
 import sendEmail from "../controllers/SES.js";
-import { User } from '../DB/Entities/User.js';
+import { User } from "../DB/Entities/User.js";
+import baseLogger from "../log.js";
 
 dotenv.config();
 
@@ -17,18 +18,13 @@ const SES_Config = {
 
 const queueConsumer = Consumer.create({
   sqs: sqsClient,
-  queueUrl: 'https://sqs.us-east-1.amazonaws.com/918000663876/exam-submissions-queue',
+  queueUrl:
+    "https://sqs.us-east-1.amazonaws.com/918000663876/exam-submissions-queue",
   handleMessage: async (message) => {
     try {
-      console.log("from consumer ");
-      const messageBody = JSON.parse(message.Body || '');
-
+      const messageBody = JSON.parse(message.Body || "");
       const { lastResponseId, submittedAnswers, userId } = messageBody;
-      console.log(lastResponseId);
       const lastResponse = await Response.findOneBy({ id: lastResponseId });
-
-      console.log(lastResponse);
-
       const exam = lastResponse?.exam;
       const title = await exam?.title;
 
@@ -38,11 +34,8 @@ const queueConsumer = Consumer.create({
         },
         relations: ["questions"],
       });
-
-      console.log(currentExam);
-      console.log(userId);
-      console.log(lastResponse);
       const user = await User.findOneBy({ id: userId });
+
       if (lastResponse && currentExam) {
         const shuffledQuestionOrder = lastResponse.shuffledQuestionOrder;
         console.log(shuffledQuestionOrder);
@@ -82,35 +75,38 @@ const queueConsumer = Consumer.create({
                   break;
               }
             } else {
-              console.error(
-                "Question is undefined for index:",
-                questionIndex
-              );
+              console.error("Question is undefined for index:", questionIndex);
             }
           } else {
             console.error("Invalid question index:", questionIndex);
           }
         }
-        console.log("from saving");
         lastResponse.totalScore = totalScore;
         lastResponse.status = "done";
         await lastResponse.save();
 
-        sendEmail(`${user?.email}`, "your mark", `Hi ${user?.username} your mark for the ${title} exam is : ${totalScore}`);
+        sendEmail(
+          `${user?.email}`,
+          "your mark",
+          `Hi ${user?.username} your mark for the ${title} exam is : ${totalScore}`
+        );
 
-        await sqsClient.send(new DeleteMessageCommand({
-          QueueUrl: 'https://sqs.us-east-1.amazonaws.com/918000663876/exam-submissions-queue',
-          ReceiptHandle: message.ReceiptHandle,
-        }));
+        await sqsClient.send(
+          new DeleteMessageCommand({
+            QueueUrl:
+              "https://sqs.us-east-1.amazonaws.com/918000663876/exam-submissions-queue",
+            ReceiptHandle: message.ReceiptHandle,
+          })
+        );
       }
     } catch (error) {
-      console.error('Error processing message:', error);
+      baseLogger.error("Error processing message:", error);
     }
   },
 });
 
-queueConsumer.on('error', (err) => {
-  console.error('Error:', err.message);
+queueConsumer.on("error", (err) => {
+  baseLogger.error("Error:", err.message);
 });
 
 export default queueConsumer;

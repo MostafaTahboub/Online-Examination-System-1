@@ -8,12 +8,12 @@ const getAllResponses = async (payload: GetAll) => {
     take: pageSize,
   });
 
-    return {
-        page,
-        pageSize: Responses.length,
-        total,
-        Responses
-    }
-}
+  return {
+    page,
+    pageSize: Responses.length,
+    total,
+    Responses,
+  };
+};
 
-export { getAllResponses}
+export { getAllResponses };

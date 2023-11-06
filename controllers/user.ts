@@ -2,7 +2,6 @@ import { User } from "../DB/Entities/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-
 const inserUser = async (payload: User) => {
   let user = new User();
   const newuser = User.create({
@@ -14,7 +13,7 @@ const inserUser = async (payload: User) => {
 const login = async (email: string, password: string) => {
   try {
     const user = await User.findOneBy({ email });
-    
+
     const passwordMatching = await bcrypt.compare(
       password,
       user?.password || ""
@@ -22,10 +21,7 @@ const login = async (email: string, password: string) => {
 
     if (user && passwordMatching) {
       const token = jwt.sign(
-        { userId:user.id,
-          email: user.email,
-          fullName: user.name,
-        },
+        { userId: user.id, email: user.email, fullName: user.name },
         process.env.SECRET_KEY || "",
         { expiresIn: "2h" }
       );
@@ -38,4 +34,4 @@ const login = async (email: string, password: string) => {
   }
 };
 
-export { login , inserUser };
+export { login, inserUser };

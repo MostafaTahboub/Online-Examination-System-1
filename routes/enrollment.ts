@@ -57,7 +57,7 @@ router.post(
       const existingExam = await Exam.findOneBy({ id: examId });
       sendEmail(
         `${existingUser?.email}`,
-        "Exam Enrollment", 
+        "Exam Enrollment",
         `Hi ${existingUser?.name} you have been enrolled to exam with this id: ${existingExam?.id} starts at: ${existingExam?.startTime}. Get Ready , please use this passwrod : ${existingExam?.password}`
       );
       baseLogger.info(`Enrollment created successfully: ${enrollment.id}`);

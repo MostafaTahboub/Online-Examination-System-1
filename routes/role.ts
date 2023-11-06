@@ -10,7 +10,7 @@ import baseLogger from "../log.js";
 
 const router = express.Router();
 
-router.post("/newRole", authenticate, authorize("Admin"), async (req, res) => {
+router.post("/post", authenticate, authorize("Admin"), async (req, res) => {
   try {
     const permissions = req.body.permissions;
 
@@ -53,7 +53,9 @@ router.post("/newRole", authenticate, authorize("Admin"), async (req, res) => {
       baseLogger.info(`New Rle has been added be admin: ${role.roleName}`);
       res.status(201).send("Role has been added succefully!");
     } else {
-      baseLogger.info(`The admin trying to add new role with name already exist`);
+      baseLogger.info(
+        `The admin trying to add new role with name already exist`
+      );
       res.status(409).send("There are a Role with this name!");
     }
   } catch (error) {
@@ -77,31 +79,36 @@ router.get("/all", authenticate, authorize("Admin"), async (req, res) => {
   }
 });
 
-///the modification done on the Root
-router.put("/assign_role_to_user", authenticate, authorize("Admin"), async (req, res) => {
-  try {
+router.put(
+  "/assign_role_to_user",
+  authenticate,
+  authorize("Admin"),
+  async (req, res) => {
+    try {
+      let x: Role | null;
+      const roleName = req.body.roleName;
+      const userName = req.body.username;
+      let role = await Role.findOneBy({ roleName: roleName }).then(
+        (rle) => (x = rle)
+      );
+      let user = await User.findOneBy({ username: userName });
 
-    let x: Role | null;
-    const roleName = req.body.roleName;
-    const userName = req.body.username;
-    let role = await Role.findOneBy({ roleName: roleName }).then((rle) => (x = rle));
-    let user = await User.findOneBy({ username: userName })
+      if (role === null || user === null) {
+        baseLogger.error(
+          `Trying to add role for user one of them or both not exist`
+        );
+        res.status(404).send("Can't find User or the Role");
+      } else {
+        user.role = role;
+        user.save();
+      }
 
-    if (role === null || user === null) {
-      baseLogger.error(`Trying to add role for user one of them or both not exist`);
-      res.status(404).send("Can't find User or the Role");
-    } else {
-      user.role = role;
-      user.save();
+      baseLogger.info(`The Role ${role?.roleName} for the user ${user?.name}`);
+      res.status(200).send("Role has been assigned to the user");
+    } catch (error) {
+      console.error("error while assigning role to the user :" + error);
+      res.status(500).send("something went wrong");
     }
-
-    baseLogger.info(`The Role ${role?.roleName} for the user ${user?.name}`)
-    res.status(200).send("Role has been assigned to the user");
   }
-  catch (error) {
-    console.error("error while assigning role to the user :" + error);
-    res.status(500).send("something went wrong");
-  }
-
-});
+);
 export default router;
