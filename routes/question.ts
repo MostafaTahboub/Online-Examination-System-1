@@ -10,7 +10,7 @@ import baseLogger from "../log.js";
 var router = express.Router();
 
 router.post(
-  "/post",
+  "/create",
   authenticate,
   authorize("POST_Question"),
   validateCreateQuestion,
@@ -32,7 +32,6 @@ router.post(
       question.options = questionData.options;
       question.correctAnswer = questionData.correctAnswer;
     } else if (question.type === "FillInTheBlank") {
-      // question.blank = questionData.blank;
       question.blankAnswer = questionData.blankAnswer;
     } else {
       return res.status(400).send("there is no question with this name ");
@@ -55,7 +54,7 @@ router.post(
 );
 
 router.put(
-  "/edit",
+  "/update",
   authenticate,
   authorize("PUT_Question"),
   validateCreateQuestion,
@@ -72,7 +71,7 @@ router.put(
 );
 
 router.get(
-  "/get/:id",
+  "/:id",
   authenticate,
   authorize("GET_Question"),
   async (req, res) => {

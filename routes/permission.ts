@@ -8,7 +8,7 @@ import baseLogger from "../log.js";
 
 const router = express.Router();
 
-router.post("/post", authenticate, authorize("Admin"), async (req, res) => {
+router.post("/", authenticate, authorize("Admin"), async (req, res) => {
   try {
     if (!req.body.permissionName) {
       res.status(400).send("Enter the name of the permission!");
@@ -33,7 +33,7 @@ router.post("/post", authenticate, authorize("Admin"), async (req, res) => {
   }
 });
 
-router.get("/all", authenticate, authorize("Admin"), async (req, res) => {
+router.get("/", authenticate, authorize("Admin"), async (req, res) => {
   try {
     const permissions = await dataSource
       .createQueryBuilder()
@@ -51,7 +51,7 @@ router.get("/all", authenticate, authorize("Admin"), async (req, res) => {
 });
 
 router.put(
-  "/assign_permsiision_to_role",
+  "/role",
   authenticate,
   authorize("Admin"),
   async (req, res) => {
