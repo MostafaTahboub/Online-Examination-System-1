@@ -27,7 +27,7 @@ AWS.config.update({
 var router = express.Router();
 
 router.post(
-  "/create",
+  "/",
   authenticate,
   authorize("POST_Exam"),
   validateCreateExam,
@@ -44,7 +44,7 @@ router.post(
 );
 
 router.post(
-  "/createRandom",
+  "/random",
   authenticate,
   authorize("POST_Exam"),
   async (req, res) => {
@@ -57,7 +57,7 @@ router.post(
   }
 );
 
-router.put("/update", authenticate, authorize("PUT_Exam"), async (req, res) => {
+router.put("/", authenticate, authorize("PUT_Exam"), async (req, res) => {
   try {
     await updateExam(req, res);
     res.status(201).send("Exam updated succeffylly");
@@ -96,7 +96,7 @@ router.get(
 );
 
 router.delete(
-  "/delete/:id",
+  "/:id",
   authenticate,
   authorize("DELETE_Exam"),
   async (req, res) => {
