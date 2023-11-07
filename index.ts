@@ -26,13 +26,13 @@ app.set('view engine', 'ejs')
 const PORT = process.env.PORT || 5000;
 
 app.use("/home", homeRouter);
-app.use("/question", questionRouter);
-app.use("/subject", subjectRouter);
-app.use("/exam", examRouter);
-app.use("/permission", permissionRouter);
-app.use("/role", roleRouter);
-app.use("/enrollment", enrollmentRouter);
-app.use('/response', responseRouter);
+app.use("/questions", questionRouter);
+app.use("/subjects", subjectRouter);
+app.use("/exams", examRouter);
+app.use("/permissions", permissionRouter);
+app.use("/roles", roleRouter);
+app.use("/enrollments", enrollmentRouter);
+app.use('/responses', responseRouter);
 app.use('/analytics', analytics);
 app.use('/', reset);
 

@@ -14,7 +14,7 @@ import { authorize } from "../middleware/auth/authorize.js";
 var router = express.Router();
 
 router.post(
-  "/user",
+  "/users",
   validateUserEnrollment,
   validateExamEnrollment,
   authenticate,

@@ -6,7 +6,7 @@ import { authorize } from '../middleware/auth/authorize.js';
 const router = express.Router();
 
 
-router.get("/all", authenticate, authorize("Admin"), (req, res, next) => {
+router.get("/", authenticate, authorize("Admin"), (req, res, next) => {
 
   const payload = {
     page: req.query.page?.toString() || "1",

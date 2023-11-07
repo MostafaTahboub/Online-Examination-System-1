@@ -43,7 +43,6 @@ router.post(
   }
 );
 
-// need some validation here
 router.post(
   "/createRandom",
   authenticate,
