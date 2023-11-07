@@ -10,7 +10,7 @@ import baseLogger from "../log.js";
 
 const router = express.Router();
 
-router.post("/post", authenticate, authorize("Admin"), async (req, res) => {
+router.post("/create", authenticate, authorize("Admin"), async (req, res) => {
   try {
     const permissions = req.body.permissions;
 
@@ -37,7 +37,6 @@ router.post("/post", authenticate, authorize("Admin"), async (req, res) => {
         });
 
         if (p === null) {
-          //create that permission
           var permision = new Permission();
           permision.name = permissions[i];
           await permision.save();

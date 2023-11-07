@@ -6,7 +6,7 @@ import { authorize } from "../middleware/auth/authorize.js";
 
 var router = express.Router();
 
-router.post("/post", authenticate, authorize("POST_Subject"), async (req, res) => {
+router.post("/create", authenticate, authorize("POST_Subject"), async (req, res) => {
 
   try {
     let newSubject = new Subject();

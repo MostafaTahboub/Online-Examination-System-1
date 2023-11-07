@@ -8,7 +8,7 @@ import baseLogger from "../log.js";
 
 const router = express.Router();
 
-router.post("/post", authenticate, authorize("Admin"), async (req, res) => {
+router.post("/create", authenticate, authorize("Admin"), async (req, res) => {
   try {
     if (!req.body.permissionName) {
       res.status(400).send("Enter the name of the permission!");

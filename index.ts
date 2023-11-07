@@ -3,7 +3,6 @@ import express from "express";
 import "reflect-metadata";
 import dataSource from "./DB/dataSource.js";
 import "./config.js";
-import createAdminUser from "./controllers/admin.js";
 import baseLogger from "./log.js";
 import analytics from "./routes/analytics.js";
 import consumer from './routes/consumer.js';
