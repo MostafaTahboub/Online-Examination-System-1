@@ -16,7 +16,9 @@ const authorize = (api: string) => {
     ) {
       next();
     } else {
-      baseLogger.info(`Someone tried to access something he don't has access to`);
+      baseLogger.info(
+        `Someone tried to access something he don't has access to`
+      );
       res
         .status(403)
         .send("you don't have the permission to access this resource!");

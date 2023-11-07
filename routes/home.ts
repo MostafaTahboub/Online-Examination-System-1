@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post("/signup", validateUser, async (req, res) => {
   try {
-    let user = new User();    
+    let user = new User();
     user.username = req.body.userName;
     user.name = req.body.name;
     user.email = req.body.email;
@@ -26,14 +26,17 @@ router.post("/signup", validateUser, async (req, res) => {
     });
     await user.save();
     baseLogger.info(`new ${Role.name} has been registered`);
-    sendEmail(user.email, "Online-Examination-System", `Hello user ${user.id} you just join our family`);
+    sendEmail(
+      user.email,
+      "Online-Examination-System",
+      `Hello user ${user.id} you just join our family`
+    );
     res.status(201).send("user has been added successfully");
   } catch (error) {
     baseLogger.error(`Error thrown while register: ${error}`);
     res.status(500).send("something went wrong ");
   }
 });
-
 
 router.post("/signin", validateUserLogin, async (req, res) => {
   const email = req.body.email;
@@ -42,7 +45,7 @@ router.post("/signin", validateUserLogin, async (req, res) => {
   login(email, password)
     .then((data) => {
       res.cookie("fullName", data.fullName, {
-        maxAge: 60 * 60 * 1000,    
+        maxAge: 60 * 60 * 1000,
       });
       res.cookie("loginTime", Date.now(), {
         maxAge: 60 * 60 * 1000,
@@ -50,7 +53,7 @@ router.post("/signin", validateUserLogin, async (req, res) => {
       res.cookie("token", data.token, {
         maxAge: 30 * 60 * 1000,
       });
-      baseLogger.info(`New login from ( ${data.fullName} ) user`)
+      baseLogger.info(`New login from ( ${data.fullName} ) user`);
       res.status(200).send("ok");
     })
     .catch((err) => {
@@ -60,12 +63,11 @@ router.post("/signin", validateUserLogin, async (req, res) => {
 });
 
 router.post("/signout", authenticate, (req, res) => {
-  baseLogger.info(`${req.cookies['fullName']} has just logged out`)
+  baseLogger.info(`${req.cookies["fullName"]} has just logged out`);
   res.cookie("fullName", "", { maxAge: -1 });
   res.cookie("logintTime", "", { maxAge: -1 });
   res.cookie("token", "", { maxAge: -1 });
   res.status(200).send("See You Soon My User");
-  
 });
 
 export default router;

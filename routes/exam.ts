@@ -27,7 +27,7 @@ AWS.config.update({
 var router = express.Router();
 
 router.post(
-  "/create",
+  "/",
   authenticate,
   authorize("POST_Exam"),
   validateCreateExam,
@@ -44,7 +44,7 @@ router.post(
 );
 
 router.post(
-  "/createRandom",
+  "/random",
   authenticate,
   authorize("POST_Exam"),
   async (req, res) => {
@@ -57,7 +57,7 @@ router.post(
   }
 );
 
-router.put("/update", authenticate, authorize("PUT_Exam"), async (req, res) => {
+router.put("/", authenticate, authorize("PUT_Exam"), async (req, res) => {
   try {
     await updateExam(req, res);
     res.status(201).send("Exam updated succeffylly");
@@ -67,36 +67,31 @@ router.put("/update", authenticate, authorize("PUT_Exam"), async (req, res) => {
   }
 });
 
-router.get(
-  "/:id",
-  authenticate,
-  authorize("GET_Exam"),
-  async (req, res) => {
-    try {
-      const id = Number(req.params.id);
-      if (!id) {
-        return res.status(400).send("Exam id required");
-      }
-
-      const existingExam = await Exam.findOne({
-        where: { id: id },
-        relations: ["questions"],
-      });
-
-      if (existingExam === null) {
-        return res.status(404).json({ msg: "Exam not found" });
-      }
-
-      res.status(200).json({ exam: existingExam });
-    } catch (error) {
-      console.error("Error ocurred while getting the exam" + error);
-      res.status(500).send("internal server error ");
+router.get("/:id", authenticate, authorize("GET_Exam"), async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) {
+      return res.status(400).send("Exam id required");
     }
+
+    const existingExam = await Exam.findOne({
+      where: { id: id },
+      relations: ["questions"],
+    });
+
+    if (existingExam === null) {
+      return res.status(404).json({ msg: "Exam not found" });
+    }
+
+    res.status(200).json({ exam: existingExam });
+  } catch (error) {
+    console.error("Error ocurred while getting the exam" + error);
+    res.status(500).send("internal server error ");
   }
-);
+});
 
 router.delete(
-  "/delete/:id",
+  "/:id",
   authenticate,
   authorize("DELETE_Exam"),
   async (req, res) => {

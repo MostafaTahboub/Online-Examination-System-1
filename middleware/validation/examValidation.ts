@@ -1,13 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
-import moment from 'moment-timezone';
-import baseLogger from '../../log.js';
-
+import { Request, Response, NextFunction } from "express";
+import moment from "moment-timezone";
+import baseLogger from "../../log.js";
 
 function validateCreateExam(req: Request, res: Response, next: NextFunction) {
-  // should add exam answers in validation here 
   const { title, startTime, duration, questionsIds } = req.body;
 
-  const timezone = 'Asia/Riyadh';
+  const timezone = "Asia/Riyadh";
 
   if (!title) {
     baseLogger.error(`Can't create exam without title`);
@@ -27,14 +25,16 @@ function validateCreateExam(req: Request, res: Response, next: NextFunction) {
     const StartTime = convertStartTime(startTime);
 
     if (currentTime > StartTime) {
-      baseLogger.error(`Can't create exam with start time before the time of creating that exam`);
+      baseLogger.error(
+        `Can't create exam with start time before the time of creating that exam`
+      );
       return res.status(400).json({
-        error: 'Bad request',
-        message: 'The start time must be in the future'
+        error: "Bad request",
+        message: "The start time must be in the future",
       });
     }
   }
- 
+
   if (!questionsIds) {
     return res
       .status(400)
@@ -45,10 +45,9 @@ function validateCreateExam(req: Request, res: Response, next: NextFunction) {
 }
 
 function convertStartTime(time: any) {
-  const timezone = 'Asia/Riyadh';
-  const convertedTime = moment.tz(time, timezone).subtract(3, 'hours');
+  const timezone = "Asia/Riyadh";
+  const convertedTime = moment.tz(time, timezone).subtract(3, "hours");
   return convertedTime;
 }
 
-
-export { validateCreateExam , convertStartTime};
+export { validateCreateExam, convertStartTime };

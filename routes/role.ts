@@ -78,36 +78,31 @@ router.get("/", authenticate, authorize("Admin"), async (req, res) => {
   }
 });
 
-router.put(
-  "/user",
-  authenticate,
-  authorize("Admin"),
-  async (req, res) => {
-    try {
-      let x: Role | null;
-      const roleName = req.body.roleName;
-      const userName = req.body.username;
-      let role = await Role.findOneBy({ roleName: roleName }).then(
-        (rle) => (x = rle)
+router.put("/user", authenticate, authorize("Admin"), async (req, res) => {
+  try {
+    let x: Role | null;
+    const roleName = req.body.roleName;
+    const userName = req.body.username;
+    let role = await Role.findOneBy({ roleName: roleName }).then(
+      (rle) => (x = rle)
+    );
+    let user = await User.findOneBy({ username: userName });
+
+    if (role === null || user === null) {
+      baseLogger.error(
+        `Trying to add role for user one of them or both not exist`
       );
-      let user = await User.findOneBy({ username: userName });
-
-      if (role === null || user === null) {
-        baseLogger.error(
-          `Trying to add role for user one of them or both not exist`
-        );
-        res.status(404).send("Can't find User or the Role");
-      } else {
-        user.role = role;
-        user.save();
-      }
-
-      baseLogger.info(`The Role ${role?.roleName} for the user ${user?.name}`);
-      res.status(200).send("Role has been assigned to the user");
-    } catch (error) {
-      console.error("error while assigning role to the user :" + error);
-      res.status(500).send("something went wrong");
+      res.status(404).send("Can't find User or the Role");
+    } else {
+      user.role = role;
+      user.save();
     }
+
+    baseLogger.info(`The Role ${role?.roleName} for the user ${user?.name}`);
+    res.status(200).send("Role has been assigned to the user");
+  } catch (error) {
+    console.error("error while assigning role to the user :" + error);
+    res.status(500).send("something went wrong");
   }
-);
+});
 export default router;

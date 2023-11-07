@@ -9,7 +9,7 @@ import { Enrollment } from "./Entities/Enrollment.js";
 import { Exam_answers } from "./Entities/Exam_answers.js";
 import { Response } from "./Entities/Response.js";
 import { CreateAdmin1698221813286 } from "../migration/1698221813286-CreateAdmin.js";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 // console.log(process.env);
 
@@ -18,22 +18,22 @@ const dataSource = new DataSource({
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
   username: process.env.DB_USERNAME,
-  password:process.env.DB_PASSWORD,    
+  password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [  
+  entities: [
     User,
     Role,
-    Permission,   
+    Permission,
     Question,
     Exam,
     Subject,
     Enrollment,
     Exam_answers,
-    Response,    
+    Response,
   ],
   migrations: [CreateAdmin1698221813286],
-  migrationsRun:false,  
-  synchronize: true,   
+  migrationsRun: false,
+  synchronize: true,
   logging: false,
 });
 

@@ -40,12 +40,10 @@ router.post(
     try {
       const savedQuestion = await question.save();
       baseLogger.info(`Question created successfully: ${question.id}`);
-      res
-        .status(201)
-        .json({
-          message: "Question created successfully",
-          question: savedQuestion,
-        });
+      res.status(201).json({
+        message: "Question created successfully",
+        question: savedQuestion,
+      });
     } catch (error) {
       baseLogger.error(`Failed to create question`);
       res.status(500).json({ error: "Failed to create question" });
