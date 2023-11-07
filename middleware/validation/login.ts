@@ -10,21 +10,20 @@ const validateUserLogin = async (
   const values = ["email", "password"];
   const user = req.body;
   let errorList: string[] = [];
-  // const errorList = values.map(key => !user[key] && `${key} is Required!`).filter(Boolean);
-  
+
   values.forEach((key) => {
     if (!user[key]) {
-       errorList.push(`${key} is Required to LogIn!`);
+      errorList.push(`${key} is Required to LogIn!`);
     }
   });
 
   if (errorList.length) {
-    baseLogger.error(`Trying to log in with missed credentials`)
+    baseLogger.error(`Trying to log in with missed credentials`);
     res.status(400).send(errorList);
   } else {
     const x = User.findOneBy({ email: user.email });
     if (x === null) {
-      baseLogger.error(`Trying to log in with invalid credentials`)
+      baseLogger.error(`Trying to log in with invalid credentials`);
       res.status(500).send("Inter valid credentials");
     } else {
       next();

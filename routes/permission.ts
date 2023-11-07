@@ -50,41 +50,36 @@ router.get("/", authenticate, authorize("Admin"), async (req, res) => {
   }
 });
 
-router.put(
-  "/role",
-  authenticate,
-  authorize("Admin"),
-  async (req, res) => {
-    try {
-      if (!req.body.roleName) {
-        res.status(400).send("Enter the role name");
-      }
-
-      if (!req.body.permissionName) {
-        res.status(400).send("Enter the permission name");
-      }
-      const role = await Role.findOneBy({ roleName: req.body.roleName });
-      const permission = await Permission.findOneBy({
-        name: req.body.permissionName,
-      });
-      if (role === null || permission === null) {
-        baseLogger.error(
-          `Error while assigning permission to role: one of them or both not exist`
-        );
-        res.send("invalid role or permission name");
-      } else {
-        role.permissions = [...role.permissions, permission];
-        role.save();
-        baseLogger.info(
-          `Assigning permission: ${permission.name} to role: ${role.roleName} was successful`
-        );
-        res.status(200).send("permission assigned to the role");
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("something went wrong ");
+router.put("/role", authenticate, authorize("Admin"), async (req, res) => {
+  try {
+    if (!req.body.roleName) {
+      res.status(400).send("Enter the role name");
     }
+
+    if (!req.body.permissionName) {
+      res.status(400).send("Enter the permission name");
+    }
+    const role = await Role.findOneBy({ roleName: req.body.roleName });
+    const permission = await Permission.findOneBy({
+      name: req.body.permissionName,
+    });
+    if (role === null || permission === null) {
+      baseLogger.error(
+        `Error while assigning permission to role: one of them or both not exist`
+      );
+      res.send("invalid role or permission name");
+    } else {
+      role.permissions = [...role.permissions, permission];
+      role.save();
+      baseLogger.info(
+        `Assigning permission: ${permission.name} to role: ${role.roleName} was successful`
+      );
+      res.status(200).send("permission assigned to the role");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("something went wrong ");
   }
-);
+});
 
 export default router;

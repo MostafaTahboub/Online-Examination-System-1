@@ -46,11 +46,13 @@ const validateUser = async (
   }
 
   if (errorList.length) {
-    baseLogger.error("data provided to create user don't match the restrictions");
+    baseLogger.error(
+      "data provided to create user don't match the restrictions"
+    );
     res.status(400).send(errorList);
-  } else {    
-    next();            
+  } else {
+    next();
   }
-};     
+};
 
 export { validateUser };
